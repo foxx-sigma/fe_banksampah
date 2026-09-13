@@ -1,26 +1,96 @@
 @import "tailwindcss";
 
+/*
+ * Design tokens - Landing Page Bank Sampah Digital
+ * Ref: PRD-LANDING.md section 4 (Palet Warna) & section 3 (Font)
+ *
+ * Landing page is light-theme only (PRD-LANDING.md section 2), so no
+ * prefers-color-scheme / dark mode override is defined here.
+ */
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+
+  /* Primary brand color (teal) - replaces old #2F2FE4 for the landing scope */
+  --color-primary: #0d9488;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-primary: var(--color-primary);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Body & UI font */
+  --font-sans: var(--font-inter);
+  /* Headline font */
+  --font-heading: var(--font-titan-one);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/*
+ * Aksen pixel art (PRD-LANDING.md section 6, referensi Streamline Pixel).
+ *
+ * Cursor pixel kustom sekarang berlaku GLOBAL di SELURUH WEBSITE - aktif
+ * setiap saat selama user ada di website, bukan cuma saat hover elemen
+ * tertentu, dan bukan cuma di landing page. Karena app/layout.tsx adalah
+ * satu-satunya root layout Next.js yang membungkus semua route, rule pada
+ * <html> di bawah otomatis ikut ke halaman dashboard nasabah/admin yang
+ * dibuat belakangan tanpa perlu diubah lagi.
+ *
+ * Catatan aset: Chromium (Chrome/Edge) TIDAK mendukung file SVG sebagai CSS
+ * cursor, jadi aset utamanya adalah pixel-cursor.png (di-generate dari grid
+ * piksel yang SAMA PERSIS dengan pixel-cursor.svg - desainnya tidak diubah).
+ * SVG tetap dipasang sebagai fallback berikutnya, lalu keyword native.
+ * Hotspot tetap di (0,0) supaya presisi pointer tidak berubah.
+ */
+html,
+html * {
+  cursor:
+    url("/assets/pixel-cursor.png") 0 0,
+    url("/assets/pixel-cursor.svg") 0 0,
+    auto;
+}
+
+/*
+ * Pengecualian: elemen yang butuh cursor teks standar supaya UX form di
+ * dashboard (input, textarea, field yang bisa diketik) tidak rusak - user
+ * tetap butuh caret/I-beam untuk tahu posisi ketik & seleksi teks.
+ * Area umum lain tetap memakai cursor pixel.
+ */
+input:not([type="button"]):not([type="submit"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]),
+textarea,
+[contenteditable="true"],
+[contenteditable="true"] * {
+  cursor: text;
+}
+
+/* Elemen non-aktif tetap memakai isyarat cursor bawaannya. */
+:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+/*
+ * Rule di bawah ini masih di-scope lewat class ".landing-page" (dipasang di
+ * <main> app/page.tsx) supaya dekorasi khusus landing page tidak "bocor" ke
+ * halaman lain (misal dashboard nasabah/admin).
+ */
+
+/* Divider dekoratif bergaya pixel/blocky - non-fungsional, hanya aksen. */
+.landing-page .pixel-divider {
+  height: 6px;
+  width: 100%;
+  max-width: 220px;
+  background-image: repeating-linear-gradient(
+    to right,
+    #000000 0 6px,
+    #0d9488 6px 12px,
+    #ffffff 12px 18px,
+    #0d9488 18px 24px
+  );
 }

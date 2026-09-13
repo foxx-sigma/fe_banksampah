@@ -1,0 +1,34 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 16 16"
+  width="16"
+  height="16"
+  shape-rendering="crispEdges"
+>
+  <!--
+    Pixel-art border accent (PRD-LANDING.md section 6).
+    Dipakai TERBATAS sebagai border-image dekoratif non-fungsional
+    (badge Hero), bukan pengganti border/ikon utama. Grid 4x4 blok,
+    tiap blok 4x4 unit, checker hitam-teal dengan aksen putih di
+    sudut supaya tetap konsisten dengan palet #0D9488 + putih + hitam.
+    Dipotong via border-image-slice sehingga hanya bagian tepi yang
+    terlihat sebagai frame blocky.
+  -->
+  <rect x="0" y="0" width="16" height="16" fill="#ffffff" />
+
+  <rect x="0" y="0" width="4" height="4" fill="#000000" />
+  <rect x="4" y="0" width="4" height="4" fill="#0d9488" />
+  <rect x="8" y="0" width="4" height="4" fill="#000000" />
+  <rect x="12" y="0" width="4" height="4" fill="#0d9488" />
+
+  <rect x="0" y="4" width="4" height="4" fill="#0d9488" />
+  <rect x="12" y="4" width="4" height="4" fill="#000000" />
+
+  <rect x="0" y="8" width="4" height="4" fill="#000000" />
+  <rect x="12" y="8" width="4" height="4" fill="#0d9488" />
+
+  <rect x="0" y="12" width="4" height="4" fill="#0d9488" />
+  <rect x="4" y="12" width="4" height="4" fill="#000000" />
+  <rect x="8" y="12" width="4" height="4" fill="#0d9488" />
+  <rect x="12" y="12" width="4" height="4" fill="#000000" />
+</svg>
