@@ -1,93 +1,144 @@
-// Section "Pentingnya Recycle" - Landing Page Bank Sampah Digital
-// Ref: PRD-LANDING.md section 5.2
-//
-// Catatan scope:
-// - Section ini murni narasi edukatif tentang pentingnya daur ulang, TIDAK
-//   memuat data statistik/angka dampak lingkungan sama sekali (keputusan
-//   eksplisit sesuai PRD, jangan ditambahkan di iterasi berikutnya).
-// - Tahapan yang ditampilkan adalah tahapan UMUM daur ulang (pisahkan,
-//   kumpulkan, olah, manfaatkan kembali) - bukan alur khusus aplikasi Bank
-//   Sampah (setor, tukar poin, dsb).
-// - Ilustrasi per tahapan memakai PLACEHOLDER (belum ada aset dari
-//   storyset.com/recycle). Sesuai instruksi, aset TIDAK di-fetch/scrape
-//   otomatis dari storyset.com - menunggu aset diunduh manual lalu ditaruh
-//   di /public/assets dan komponen ini diupdate untuk memakainya.
-// - TODO (langkah selanjutnya, setelah aset asli storyset tersedia):
-//   1. Pilih satu gaya ilustrasi Storyset (Rafiki/Bro/Amico/Pana/Cuate) dan
-//      pakai gaya yang SAMA untuk seluruh ilustrasi di section ini.
-//   2. Custom warna ilustrasi via color customizer Storyset supaya memakai
-//      palet landing page: primary teal (#0D9488) + putih + hitam saja.
-//   3. Ganti blok placeholder di RECYCLE_STAGES (illustrationPlaceholder)
-//      dengan <Image>/SVG aset asli.
-// - Tidak ada emoji dipakai di file ini (sesuai aturan mutlak PRD section 2).
+"use client";
+
+import { useMemo } from "react";
+import LayeredExtrudedText from "@/components/landing/LayeredExtrudedText";
+import { useSectionStagger } from "@/hooks/useSectionStagger";
 
 type RecycleStage = {
   title: string;
   description: string;
-  illustrationPlaceholder: string;
+  imageSrc: string;
+  imageAlt: string;
 };
 
-// Tahapan umum daur ulang (generik, bukan flow khusus aplikasi).
 const RECYCLE_STAGES: RecycleStage[] = [
   {
     title: "Pisahkan",
     description:
       "Pisahkan sampah berdasarkan jenisnya sejak dari sumbernya, misalnya organik, plastik, kertas, dan logam, supaya proses daur ulang berikutnya lebih mudah dan efektif.",
-    illustrationPlaceholder: "Pisahkan Sampah",
+    imageSrc: "/components/pisahkan.svg",
+    imageAlt: "Ilustrasi memisahkan sampah",
   },
   {
     title: "Kumpulkan",
     description:
       "Kumpulkan sampah yang sudah dipisahkan di satu tempat yang layak, lalu salurkan ke pihak yang tepat seperti bank sampah atau fasilitas pengumpulan daur ulang terdekat.",
-    illustrationPlaceholder: "Kumpulkan Sampah",
+    imageSrc: "/components/kumpulkan.svg",
+    imageAlt: "Ilustrasi mengumpulkan sampah",
   },
   {
     title: "Olah",
     description:
       "Sampah yang terkumpul diolah melalui proses seperti pembersihan, penghancuran, atau peleburan sehingga bisa diubah menjadi bahan baku baru yang siap dipakai kembali.",
-    illustrationPlaceholder: "Olah Sampah",
+    imageSrc: "/components/olah.svg",
+    imageAlt: "Ilustrasi mengolah sampah",
   },
   {
     title: "Manfaatkan Kembali",
     description:
       "Bahan hasil olahan dipakai kembali menjadi produk baru, sehingga siklus daur ulang berjalan berkelanjutan dan mengurangi kebutuhan bahan baku baru dari alam.",
-    illustrationPlaceholder: "Manfaatkan Kembali",
+    imageSrc: "/components/manfaatkan.svg",
+    imageAlt: "Ilustrasi memanfaatkan kembali sampah",
   },
 ];
 
-function StageIllustrationPlaceholder({ label }: { label: string }) {
-  return (
-    <div
-      role="img"
-      aria-label={`Placeholder ilustrasi storyset - ${label}`}
-      className="flex h-40 w-full items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 px-4 text-center font-sans text-sm font-medium text-primary/70 sm:h-48"
-    >
-      ilustrasi storyset - {label}
-      <br />
-      (placeholder, aset asli menyusul)
-    </div>
-  );
-}
-
 export default function RecycleImportanceSection() {
+  const staggerOptions = useMemo(
+    () => ({
+      groups: [
+        {
+          selector: ".recycle-headline",
+          fromVars: { opacity: 0, y: 30, scale: 0.92 },
+          toVars: { opacity: 1, y: 0, scale: 1, duration: 0.6 },
+          position: "<",
+        },
+        {
+          selector: ".extruded-main-letter",
+          fromVars: { opacity: 0, scale: 0, y: 10 },
+          toVars: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "back.out(1.7)",
+            stagger: { each: 0.04 },
+          },
+          position: "-=0.2",
+        },
+        {
+          selector: '.extruded-shadow-letter[data-layer="0"]',
+          fromVars: { opacity: 0 },
+          toVars: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.3,
+            stagger: { each: 0.03 },
+          },
+          position: "-=0.15",
+        },
+        {
+          selector: '.extruded-shadow-letter[data-layer="1"]',
+          fromVars: { opacity: 0 },
+          toVars: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.3,
+            stagger: { each: 0.03 },
+          },
+          position: "-=0.2",
+        },
+        {
+          selector: '.extruded-shadow-letter[data-layer="2"]',
+          fromVars: { opacity: 0 },
+          toVars: {
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            duration: 0.3,
+            stagger: { each: 0.03 },
+          },
+          position: "-=0.2",
+        },
+        {
+          selector: ".recycle-narasi",
+          fromVars: { opacity: 0, y: 20 },
+          toVars: { opacity: 1, y: 0, duration: 0.5 },
+          position: "-=0.1",
+        },
+        {
+          selector: ".recycle-stage-card",
+          fromVars: { opacity: 0, y: 40, scale: 0.9 },
+          toVars: { opacity: 1, y: 0, scale: 1, duration: 0.5 },
+          position: "-=0.1",
+        },
+      ],
+    }),
+    [],
+  );
+
+  const sectionRef = useSectionStagger(staggerOptions);
+
   return (
-    <section className="w-full px-6 py-20 sm:py-28">
+    <section ref={sectionRef} className="w-full px-6 py-20 sm:py-28">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
-        {/* Judul section */}
-        <h2 className="font-heading text-3xl leading-tight text-black sm:text-4xl">
-          Pentingnya Daur Ulang
+        <h2 className="recycle-headline font-heading font-bold text-3xl leading-tight text-black opacity-0 sm:text-4xl md:text-5xl">
+          Pentingnya{"\u00A0"}
+          <LayeredExtrudedText text="Daur" />
+          {" "}
+          <LayeredExtrudedText text="Ulang" />
         </h2>
 
-        {/* Narasi pentingnya recycle - murni edukatif, tanpa statistik/angka */}
         <div className="max-w-2xl space-y-4 font-sans text-base text-black/70 sm:text-lg">
-          <p>
+          <p className="recycle-narasi opacity-0">
             Daur ulang adalah salah satu cara sederhana namun berdampak besar
             untuk menjaga kelestarian lingkungan. Dengan mengolah kembali
             barang yang sudah tidak terpakai, kita membantu mengurangi
             penumpukan sampah dan memperpanjang manfaat dari setiap material
             yang sudah diproduksi.
           </p>
-          <p>
+          <p className="recycle-narasi opacity-0">
             Kebiasaan memilah dan mendaur ulang sampah juga menumbuhkan
             kesadaran akan pentingnya menjaga bumi untuk generasi mendatang.
             Ini bukan hanya tanggung jawab industri atau pemerintah, tetapi
@@ -96,14 +147,20 @@ export default function RecycleImportanceSection() {
         </div>
       </div>
 
-      {/* Tahapan umum daur ulang */}
       <div className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
         {RECYCLE_STAGES.map((stage, index) => (
           <div
             key={stage.title}
-            className="flex flex-col items-center gap-4 text-center"
+            className="recycle-stage-card flex flex-col items-center gap-4 text-center opacity-0"
           >
-            <StageIllustrationPlaceholder label={stage.illustrationPlaceholder} />
+            <div className="flex h-44 w-full items-center justify-center rounded-2xl bg-primary/5 p-4 sm:h-48">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={stage.imageSrc}
+                alt={stage.imageAlt}
+                className="h-full w-full object-contain transition-transform duration-300 hover:scale-105"
+              />
+            </div>
 
             <div className="flex items-center gap-2">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary font-sans text-sm font-semibold text-white">

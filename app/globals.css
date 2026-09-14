@@ -23,7 +23,7 @@
   /* Body & UI font */
   --font-sans: var(--font-inter);
   /* Headline font */
-  --font-heading: var(--font-titan-one);
+  --font-heading: var(--font-fredoka);
 }
 
 body {
@@ -48,6 +48,10 @@ body {
  * SVG tetap dipasang sebagai fallback berikutnya, lalu keyword native.
  * Hotspot tetap di (0,0) supaya presisi pointer tidak berubah.
  */
+html {
+  scroll-behavior: smooth;
+}
+
 html,
 html * {
   cursor:
