@@ -7,7 +7,7 @@ import gsap from "gsap";
 
 const NAV_ITEMS = [
   { label: "Beranda", href: "/" },
-  { label: "Tentang", href: "/#tentang" },
+  { label: "Tentang", href: "/tentang" },
   { label: "Cara Kerja", href: "/cara-kerja" },
 ] as const;
 

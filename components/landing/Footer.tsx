@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSectionStagger } from "@/hooks/useSectionStagger";
 
 const QUICK_LINKS = [
-  { label: "Tentang", href: "/#tentang" },
+  { label: "Tentang", href: "/tentang" },
   { label: "Cara Kerja", href: "/cara-kerja" },
 ] as const;
 

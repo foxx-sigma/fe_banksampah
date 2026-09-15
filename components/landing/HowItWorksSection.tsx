@@ -15,38 +15,38 @@ const STEPS: Step[] = [
     title: "Daftar & Verifikasi Akun",
     description:
       "Buat akun di aplikasi Bank Sampah Digital, lalu verifikasi identitasmu agar bisa mulai menyetor sampah dan mengumpulkan poin.",
-    imageSrc: "/step/step-1.svg",
+    imageSrc: "/step/sign-up.svg",
   },
   {
     title: "Setor Sampah Terpilah ke Titik Bank Sampah",
     description:
       "Bawa sampah yang sudah dipilah ke titik pengumpulan bank sampah terdekat sesuai lokasi yang tersedia di aplikasi.",
-    imageSrc: "/step/step-2.svg",
+    imageSrc: "/step/setorkan sampah.svg",
   },
   {
     title: "Petugas Menimbang & Mencatat Sampah",
     description:
       "Petugas bank sampah akan menimbang dan mencatat jenis serta berat sampah yang kamu setorkan secara digital.",
-    imageSrc: "/step/step-3.svg",
+    imageSrc: "/step/petugas mendata.svg",
   },
   {
     title: "Saldo/Poin Otomatis Masuk ke Dashboard",
     description:
       "Setelah pencatatan selesai, saldo atau poin langsung masuk ke dashboard akunmu secara otomatis dan real-time.",
-    imageSrc: "/step/step-4.svg",
+    imageSrc: "/step/E-Wallet-pana.svg",
   },
   {
     title: "Tukar Poin Jadi Saldo atau Hadiah",
     description:
       "Gunakan poin yang terkumpul untuk ditukar menjadi saldo tunai atau hadiah menarik yang tersedia di aplikasi.",
-    imageSrc: "/step/step-5.svg",
+    imageSrc: "/step/tukarkan poin.svg",
   },
 ];
 
 export default function HowItWorksSection() {
   const staggerOptions = useMemo(
     () => ({
-      triggerStart: "top 75%",
+      skipScrollTrigger: true,
       groups: [
         {
           selector: ".how-it-works-heading",
