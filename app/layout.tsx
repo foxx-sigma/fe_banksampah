@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Fredoka } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="id"
       className={`${inter.variable} ${fredoka.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

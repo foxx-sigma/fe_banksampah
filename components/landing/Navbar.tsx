@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { List, X } from "@phosphor-icons/react";
 import gsap from "gsap";
+import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
   { label: "Beranda", href: "/" },
@@ -12,6 +13,7 @@ const NAV_ITEMS = [
 ] as const;
 
 export default function Navbar() {
+  const { user, isAuthenticated, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
 
@@ -70,13 +72,39 @@ export default function Navbar() {
             ))}
           </div>
 
-          <div className="hidden md:block">
-            <a
-              href="#daftar"
-              className="rounded-full bg-primary px-5 py-2.5 font-sans text-sm font-semibold text-white transition hover:opacity-90"
-            >
-              Daftar Sekarang
-            </a>
+          <div className="hidden md:flex md:items-center md:gap-3">
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href={user?.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/nasabah"}
+                  className="rounded-full bg-primary/10 px-5 py-2.5 font-sans text-sm font-semibold text-primary transition hover:bg-primary/20"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="rounded-full bg-red-500 px-5 py-2.5 font-sans text-sm font-semibold text-white transition hover:bg-red-600"
+                >
+                  Keluar
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="rounded-full px-5 py-2.5 font-sans text-sm font-semibold text-black transition hover:opacity-70"
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/register"
+                  className="rounded-full bg-primary px-5 py-2.5 font-sans text-sm font-semibold text-white transition hover:opacity-90"
+                >
+                  Daftar Sekarang
+                </Link>
+              </>
+            )}
           </div>
 
           <button
@@ -104,14 +132,45 @@ export default function Navbar() {
                 {item.label}
               </Link>
             ))}
-            <div className="mt-2 border-t border-gray-100 pt-3">
-              <a
-                href="#daftar"
-                onClick={handleNavClick}
-                className="block rounded-full bg-primary px-5 py-2.5 text-center font-sans text-sm font-semibold text-white transition hover:opacity-90"
-              >
-                Daftar Sekarang
-              </a>
+            <div className="mt-2 border-t border-gray-100 pt-3 flex flex-col gap-2">
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    href={user?.role === "ADMIN" ? "/dashboard/admin" : "/dashboard/nasabah"}
+                    onClick={handleNavClick}
+                    className="block rounded-full bg-primary/10 px-5 py-2.5 text-center font-sans text-sm font-semibold text-primary transition hover:bg-primary/20"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleNavClick();
+                      logout();
+                    }}
+                    className="block w-full rounded-full bg-red-500 px-5 py-2.5 text-center font-sans text-sm font-semibold text-white transition hover:bg-red-600"
+                  >
+                    Keluar
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    onClick={handleNavClick}
+                    className="block rounded-full px-5 py-2.5 text-center font-sans text-sm font-semibold text-black transition hover:opacity-70"
+                  >
+                    Masuk
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={handleNavClick}
+                    className="block rounded-full bg-primary px-5 py-2.5 text-center font-sans text-sm font-semibold text-white transition hover:opacity-90"
+                  >
+                    Daftar Sekarang
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
