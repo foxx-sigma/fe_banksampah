@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import LayeredExtrudedText from "@/components/landing/LayeredExtrudedText";
 import { useSectionStagger } from "@/hooks/useSectionStagger";
+import FallbackImage from "@/components/ui/FallbackImage";
 
 type RecycleStage = {
   title: string;
@@ -16,28 +17,28 @@ const RECYCLE_STAGES: RecycleStage[] = [
     title: "Pisahkan",
     description:
       "Pisahkan sampah berdasarkan jenisnya sejak dari sumbernya, misalnya organik, plastik, kertas, dan logam, supaya proses daur ulang berikutnya lebih mudah dan efektif.",
-    imageSrc: "/components/pisahkan.svg",
+    imageSrc: "/pentingnya-recycle/pisahkan.svg",
     imageAlt: "Ilustrasi memisahkan sampah",
   },
   {
     title: "Kumpulkan",
     description:
       "Kumpulkan sampah yang sudah dipisahkan di satu tempat yang layak, lalu salurkan ke pihak yang tepat seperti bank sampah atau fasilitas pengumpulan daur ulang terdekat.",
-    imageSrc: "/components/kumpulkan.svg",
+    imageSrc: "/pentingnya-recycle/kumpulkan.svg",
     imageAlt: "Ilustrasi mengumpulkan sampah",
   },
   {
     title: "Olah",
     description:
       "Sampah yang terkumpul diolah melalui proses seperti pembersihan, penghancuran, atau peleburan sehingga bisa diubah menjadi bahan baku baru yang siap dipakai kembali.",
-    imageSrc: "/components/olah.svg",
+    imageSrc: "/pentingnya-recycle/olah.svg",
     imageAlt: "Ilustrasi mengolah sampah",
   },
   {
     title: "Manfaatkan Kembali",
     description:
       "Bahan hasil olahan dipakai kembali menjadi produk baru, sehingga siklus daur ulang berjalan berkelanjutan dan mengurangi kebutuhan bahan baku baru dari alam.",
-    imageSrc: "/components/manfaatkan.svg",
+    imageSrc: "/pentingnya-recycle/manfaatkan.svg",
     imageAlt: "Ilustrasi memanfaatkan kembali sampah",
   },
 ];
@@ -154,8 +155,7 @@ export default function RecycleImportanceSection() {
             className="recycle-stage-card flex flex-col items-center gap-4 text-center opacity-0"
           >
             <div className="flex h-44 w-full items-center justify-center rounded-2xl bg-primary/5 p-4 sm:h-48">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <FallbackImage
                 src={stage.imageSrc}
                 alt={stage.imageAlt}
                 className="h-full w-full object-contain transition-transform duration-300 hover:scale-105"

@@ -1,19 +1,15 @@
 import Navbar from "@/components/landing/Navbar";
-import HeroSection from "@/components/landing/HeroSection";
-import RecycleImportanceSection from "@/components/landing/RecycleImportanceSection";
-import ContactSection from "@/components/landing/ContactSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
 import LoadingScreen from "@/components/landing/LoadingScreen";
 import Footer from "@/components/landing/Footer";
 
-export default function Home() {
+export default function CaraKerjaPage() {
   return (
     <main className="landing-page relative flex flex-1 flex-col bg-white text-black">
       <LoadingScreen />
       <div className="relative flex flex-1 flex-col">
         <Navbar />
-        <HeroSection />
-        <RecycleImportanceSection />
-        <ContactSection />
+        <HowItWorksSection />
         <Footer />
       </div>
     </main>

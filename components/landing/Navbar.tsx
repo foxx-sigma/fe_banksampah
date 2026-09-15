@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { List, X } from "@phosphor-icons/react";
 import gsap from "gsap";
 
 const NAV_ITEMS = [
-  { label: "Beranda", href: "#beranda" },
-  { label: "Tentang", href: "#tentang" },
-  { label: "Cara Kerja", href: "#cara-kerja" },
-  { label: "Kontak", href: "#kontak" },
+  { label: "Beranda", href: "/" },
+  { label: "Tentang", href: "/#tentang" },
+  { label: "Cara Kerja", href: "/cara-kerja" },
 ] as const;
 
 export default function Navbar() {
@@ -50,23 +50,23 @@ export default function Navbar() {
     <nav ref={navRef} className="relative w-full px-4 pt-4 opacity-0 sm:px-6 sm:pt-6">
       <div className="mx-auto max-w-6xl rounded-full border border-gray-200 bg-white/90 px-6 py-3 shadow-sm">
         <div className="flex items-center justify-between">
-          <a
-            href="#beranda"
+          <Link
+            href="/"
             onClick={handleNavClick}
             className="font-heading text-xl font-semibold text-black"
           >
             Bank Sampah
-          </a>
+          </Link>
 
           <div className="hidden items-center gap-1 md:flex">
             {NAV_ITEMS.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 className="rounded-full px-3.5 py-1.5 font-sans text-sm font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -95,14 +95,14 @@ export default function Navbar() {
         <div className="mx-auto mt-2 max-w-6xl rounded-2xl border border-gray-200 bg-white/95 px-4 py-4 shadow-sm md:hidden">
           <div className="flex flex-col gap-1">
             {NAV_ITEMS.map((item) => (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 onClick={handleNavClick}
                 className="rounded-xl px-4 py-2.5 font-sans text-sm font-medium text-black/70 transition-colors hover:bg-primary/10 hover:text-primary"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
             <div className="mt-2 border-t border-gray-100 pt-3">
               <a
