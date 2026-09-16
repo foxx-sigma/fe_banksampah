@@ -16,7 +16,7 @@ export default function HeroSection() {
           position: "<",
         },
         {
-          selector: ".extruded-main-letter",
+          selector: ".stagger-letter",
           fromVars: { opacity: 0, scale: 0, y: 10 },
           toVars: {
             opacity: 1,
@@ -25,42 +25,6 @@ export default function HeroSection() {
             duration: 0.4,
             ease: "back.out(1.7)",
             stagger: { each: 0.04 },
-          },
-          position: "-=0.2",
-        },
-        {
-          selector: '.extruded-shadow-letter[data-layer="0"]',
-          fromVars: { opacity: 0 },
-          toVars: {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: { each: 0.03 },
-          },
-          position: "-=0.15",
-        },
-        {
-          selector: '.extruded-shadow-letter[data-layer="1"]',
-          fromVars: { opacity: 0 },
-          toVars: {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: { each: 0.03 },
-          },
-          position: "-=0.2",
-        },
-        {
-          selector: '.extruded-shadow-letter[data-layer="2"]',
-          fromVars: { opacity: 0 },
-          toVars: {
-            opacity: 1,
-            scale: 1,
-            y: 0,
-            duration: 0.3,
-            stagger: { each: 0.03 },
           },
           position: "-=0.2",
         },

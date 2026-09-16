@@ -33,10 +33,19 @@ async function fetchBff<T>(path: string, options?: RequestInit) {
     ...options,
   });
 
-  const json = await res.json();
+  const json = await res.json().catch(() => ({}));
 
   if (!res.ok || !json.success) {
-    throw new Error(json.message || `Request gagal (${res.status})`);
+    if (res.status === 401 && typeof window !== "undefined") {
+      // Avoid redirect loop if already on login page
+      if (!window.location.pathname.includes("/login")) {
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+        window.location.href = "/login?expired=1";
+      }
+    }
+    const error = new Error(json.message || `Request gagal (${res.status})`);
+    (error as Error & { status: number }).status = res.status;
+    throw error;
   }
 
   return json.data as T;
@@ -57,7 +66,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const user = await fetchBff<UserProfile>("/api/auth/me");
         if (mounted) setState({ user, isLoading: false, isAuthenticated: true });
       } catch {
-        if (mounted) setState({ user: null, isLoading: false, isAuthenticated: false });
+        if (mounted) {
+          setState({ user: null, isLoading: false, isAuthenticated: false });
+          // If we fail on initial load with 401, we might need to redirect if they are on a protected route.
+          // But since we can't assume which route is protected without middleware, we only redirect
+          // if they are clearly doing an action that gets 401. Or, we can let individual pages handle it.
+        }
       }
     })();
     return () => {
