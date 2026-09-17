@@ -6,6 +6,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { X } from "@phosphor-icons/react";
 
 interface DialogProps {
   open: boolean;
@@ -48,8 +49,16 @@ export default function Dialog({ open, onClose, children, className = "" }: Dial
     >
       <div
         ref={panelRef}
-        className={`bg-white rounded-xl shadow-xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 ${className}`}
+        className={`relative bg-white rounded-xl shadow-xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 ${className}`}
       >
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1 text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 rounded-lg transition z-10"
+          aria-label="Tutup"
+        >
+          <X size={20} weight="bold" />
+        </button>
         {children}
       </div>
     </div>
