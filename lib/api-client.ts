@@ -76,3 +76,26 @@ export async function apiPost<T>(
     headers,
   });
 }
+
+export async function apiPut<T>(
+  path: string,
+  body?: unknown,
+  headers?: HeadersInit,
+) {
+  const isFormData = body instanceof FormData;
+  return apiFetch<T>(path, {
+    method: "PUT",
+    body: isFormData ? (body as FormData) : JSON.stringify(body),
+    headers,
+  });
+}
+
+export async function apiDelete<T>(
+  path: string,
+  headers?: HeadersInit,
+) {
+  return apiFetch<T>(path, {
+    method: "DELETE",
+    headers,
+  });
+}

@@ -28,10 +28,10 @@ export const DUMMY_STATS: AdminOverviewStats = {
 };
 
 export const DUMMY_CHART_DATA: CategoryTonData[] = [
-  { kategori: "Plastik", tonaseKg: 450.5, warna: "bg-teal-500" },
-  { kategori: "Kertas", tonaseKg: 320.2, warna: "bg-cyan-500" },
-  { kategori: "Logam", tonaseKg: 150.0, warna: "bg-indigo-500" },
-  { kategori: "Kaca", tonaseKg: 95.8, warna: "bg-sky-400" },
+  { kategori: "Plastik", tonaseKg: 450.5, warna: "bg-teal-600" },
+  { kategori: "Kertas", tonaseKg: 320.2, warna: "bg-teal-500" },
+  { kategori: "Logam", tonaseKg: 150.0, warna: "bg-teal-700" },
+  { kategori: "Kaca", tonaseKg: 95.8, warna: "bg-teal-400" },
 ];
 
 export const DUMMY_PENDING_SETORAN: PendingSetorItem[] = [

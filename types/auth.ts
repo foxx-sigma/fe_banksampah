@@ -20,7 +20,6 @@ export interface UserProfile {
   id: string;
   username: string;
   role: UserRole;
-  appMakerId: string;
   nasabah?: NasabahProfile | null;
   adminBank?: AdminBankProfile | null;
 }

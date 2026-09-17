@@ -80,10 +80,10 @@ async function fetchDashboardData() {
       
       if (bjs) {
         chartData = [
-          { kategori: "Plastik", tonaseKg: bjs.plastik?.tonaseKg || 0, warna: "bg-teal-500" },
-          { kategori: "Kertas", tonaseKg: bjs.kertas?.tonaseKg || 0, warna: "bg-cyan-500" },
-          { kategori: "Logam", tonaseKg: bjs.logam?.tonaseKg || 0, warna: "bg-indigo-500" },
-          { kategori: "Kaca", tonaseKg: bjs.kaca?.tonaseKg || 0, warna: "bg-sky-400" },
+          { kategori: "Plastik", tonaseKg: bjs.plastik?.tonaseKg || 0, warna: "bg-teal-600" },
+          { kategori: "Kertas", tonaseKg: bjs.kertas?.tonaseKg || 0, warna: "bg-teal-500" },
+          { kategori: "Logam", tonaseKg: bjs.logam?.tonaseKg || 0, warna: "bg-teal-700" },
+          { kategori: "Kaca", tonaseKg: bjs.kaca?.tonaseKg || 0, warna: "bg-teal-400" },
         ];
       }
 
