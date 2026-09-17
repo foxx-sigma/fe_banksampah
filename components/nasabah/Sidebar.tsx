@@ -12,6 +12,7 @@ import {
   Gift,
   Receipt,
   SignOut,
+  ArrowLeft,
 } from "@phosphor-icons/react";
 
 const NAV_ITEMS = [
@@ -58,9 +59,19 @@ export default function NasabahSidebar() {
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-16 md:w-20 bg-white border-r border-zinc-200 flex flex-col items-center py-6 gap-4 z-40">
-      <div className="mb-4 text-teal-600">
-        <Recycle size={32} weight="fill" />
-      </div>
+      <Link
+        href="/"
+        className="group relative flex items-center justify-center p-2.5 rounded-xl text-teal-600 hover:text-teal-700 hover:bg-teal-50 transition-colors mb-2"
+        aria-label="Kembali ke Beranda"
+      >
+        <ArrowLeft size={24} weight="bold" />
+
+        <div className="absolute left-full ml-3 hidden group-hover:flex items-center z-50">
+          <div className="bg-white text-zinc-900 border border-zinc-200 text-sm font-sans px-3 py-1.5 rounded-md whitespace-nowrap shadow-md">
+            Kembali ke Beranda
+          </div>
+        </div>
+      </Link>
 
       <nav className="flex flex-col gap-3 w-full flex-1">
         {NAV_ITEMS.map((item) => {

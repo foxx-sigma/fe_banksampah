@@ -39,6 +39,7 @@ export interface SetorSampahItem {
   status: StatusSetor;
   catatan: string | null;
   catatanAdmin: string | null;
+  foto: string | null;
   createdAt: string;
   nasabah: NasabahSummary;
   detailSetor: DetailSetorItem[];
