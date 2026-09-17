@@ -1,7 +1,6 @@
 import type { ApiResponse } from "@/types/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3001";
-const APP_KEY = process.env.NEXT_PUBLIC_APP_KEY || "";
 
 export class ApiError extends Error {
   status: number;
@@ -15,9 +14,6 @@ export class ApiError extends Error {
 
 function buildHeaders(extra?: HeadersInit): Headers {
   const headers = new Headers(extra);
-  if (APP_KEY) {
-    headers.set("x-app-key", APP_KEY);
-  }
   return headers;
 }
 
