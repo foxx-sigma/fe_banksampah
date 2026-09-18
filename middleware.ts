@@ -5,12 +5,21 @@ function parseJwtPayload(token: string): Record<string, unknown> | null {
     const parts = token.split(".");
     if (parts.length !== 3) return null;
     const payload = parts[1];
-    const base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    let base64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    while (base64.length % 4) {
+      base64 += "=";
+    }
     const json = atob(base64);
     return JSON.parse(json);
   } catch {
     return null;
   }
+}
+
+function clearAuthAndRedirectLogin(req: NextRequest): NextResponse {
+  const res = NextResponse.redirect(new URL("/login", req.url));
+  res.cookies.delete("auth_token");
+  return res;
 }
 
 export function middleware(req: NextRequest) {
@@ -23,25 +32,31 @@ export function middleware(req: NextRequest) {
 
   const payload = parseJwtPayload(token);
   if (!payload) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return clearAuthAndRedirectLogin(req);
   }
 
   const exp = payload.exp as number | undefined;
   if (!exp || exp * 1000 < Date.now()) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return clearAuthAndRedirectLogin(req);
   }
 
   const role = payload.role as string | undefined;
   if (!role) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return clearAuthAndRedirectLogin(req);
   }
 
   if (pathname.startsWith("/dashboard/admin") && role !== "ADMIN") {
-    return NextResponse.redirect(new URL("/login", req.url));
+    if (role === "NASABAH") {
+      return NextResponse.redirect(new URL("/dashboard/nasabah", req.url));
+    }
+    return clearAuthAndRedirectLogin(req);
   }
 
   if (pathname.startsWith("/dashboard/nasabah") && role !== "NASABAH") {
-    return NextResponse.redirect(new URL("/login", req.url));
+    if (role === "ADMIN") {
+      return NextResponse.redirect(new URL("/dashboard/admin", req.url));
+    }
+    return clearAuthAndRedirectLogin(req);
   }
 
   if (pathname === "/dashboard" || pathname === "/dashboard/") {
@@ -51,7 +66,7 @@ export function middleware(req: NextRequest) {
     if (role === "NASABAH") {
       return NextResponse.redirect(new URL("/dashboard/nasabah", req.url));
     }
-    return NextResponse.redirect(new URL("/login", req.url));
+    return clearAuthAndRedirectLogin(req);
   }
 
   return NextResponse.next();

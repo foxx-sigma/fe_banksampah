@@ -20,6 +20,9 @@ function buildHeaders(extra?: HeadersInit): Headers {
 async function parseErrorMessage(res: Response): Promise<string> {
   try {
     const body = await res.json();
+    if (Array.isArray(body?.errors) && body.errors.length > 0) {
+      return body.errors.join(", ");
+    }
     if (body?.message) {
       return Array.isArray(body.message) ? body.message.join(", ") : body.message;
     }
