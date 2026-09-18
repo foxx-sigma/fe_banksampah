@@ -49,6 +49,8 @@ export default function Dialog({ open, onClose, children, className = "" }: Dial
     >
       <div
         ref={panelRef}
+        role="dialog"
+        aria-modal="true"
         className={`relative bg-white rounded-xl shadow-xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 ${className}`}
       >
         <button

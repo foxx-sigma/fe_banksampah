@@ -21,27 +21,11 @@ export default function Navbar() {
     const nav = navRef.current;
     if (!nav) return;
 
-    gsap.set(nav, { opacity: 0, y: -20 });
-
-    const play = () => {
-      gsap.to(nav, {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        ease: "power2.out",
-      });
-    };
-
-    window.addEventListener("landing-ready", play, { once: true });
-
-    const fallback = setTimeout(() => {
-      if (gsap.getProperty(nav, "opacity") === 0) play();
-    }, 6000);
-
-    return () => {
-      window.removeEventListener("landing-ready", play);
-      clearTimeout(fallback);
-    };
+    gsap.fromTo(
+      nav,
+      { opacity: 0, y: -20 },
+      { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+    );
   }, []);
 
   function handleNavClick() {
@@ -49,7 +33,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav ref={navRef} className="relative w-full px-4 pt-4 opacity-0 sm:px-6 sm:pt-6">
+    <nav ref={navRef} className="relative w-full px-4 pt-4 sm:px-6 sm:pt-6">
       <div className="mx-auto flex max-w-6xl items-center justify-center gap-3">
         <div className="w-full flex-1 rounded-full border border-gray-200 bg-white/90 px-6 py-3 shadow-sm">
           <div className="flex items-center justify-between">

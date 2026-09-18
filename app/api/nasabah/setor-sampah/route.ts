@@ -78,9 +78,12 @@ export async function POST(req: NextRequest) {
 
       const json = await backendRes.json().catch(() => ({}));
       if (!backendRes.ok) {
-        const msg = json?.message
-          ? Array.isArray(json.message) ? json.message.join(", ") : json.message
-          : `Request gagal dengan status ${backendRes.status}`;
+        const detail = Array.isArray(json?.errors) && json.errors.length > 0
+          ? json.errors.join(", ")
+          : null;
+        const msg = detail
+          || (json?.message ? (Array.isArray(json.message) ? json.message.join(", ") : json.message) : null)
+          || `Request gagal dengan status ${backendRes.status}`;
         return NextResponse.json(
           { success: false, message: msg, data: null },
           { status: backendRes.status },
@@ -109,9 +112,12 @@ export async function POST(req: NextRequest) {
 
     const json = await backendRes.json().catch(() => ({}));
     if (!backendRes.ok) {
-      const msg = json?.message
-        ? Array.isArray(json.message) ? json.message.join(", ") : json.message
-        : `Request gagal dengan status ${backendRes.status}`;
+      const detail = Array.isArray(json?.errors) && json.errors.length > 0
+        ? json.errors.join(", ")
+        : null;
+      const msg = detail
+        || (json?.message ? (Array.isArray(json.message) ? json.message.join(", ") : json.message) : null)
+        || `Request gagal dengan status ${backendRes.status}`;
       return NextResponse.json(
         { success: false, message: msg, data: null },
         { status: backendRes.status },

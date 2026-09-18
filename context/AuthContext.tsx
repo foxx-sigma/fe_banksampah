@@ -37,8 +37,14 @@ async function fetchBff<T>(path: string, options?: RequestInit) {
 
   if (!res.ok || !json.success) {
     if (res.status === 401 && typeof window !== "undefined") {
-      // Avoid redirect loop if already on login page
-      if (!window.location.pathname.includes("/login")) {
+      const pathname = window.location.pathname;
+      const isPublic =
+        pathname === "/" ||
+        pathname.startsWith("/tentang") ||
+        pathname.startsWith("/cara-kerja") ||
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/register");
+      if (!isPublic) {
         // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = "/login?expired=1";
       }

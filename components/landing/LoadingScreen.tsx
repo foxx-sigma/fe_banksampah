@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-const ROTATION_COUNT = 2;
-const ROTATION_DURATION = 3; // Durasi santai & halus untuk 3 putaran (0.9 detik per 360°)
-const SAFETY_TIMEOUT_MS = 5000;
+const ROTATION_COUNT = 1;
+const ROTATION_DURATION = 0.8; // Durasi santai & halus
+const SAFETY_TIMEOUT_MS = 2000;
 
 export default function LoadingScreen() {
   const [isMounted, setIsMounted] = useState(true);
@@ -32,7 +32,7 @@ export default function LoadingScreen() {
 
     // 2. Kesiapan DOM / aset halaman
     const windowReady = new Promise<void>((resolve) => {
-      if (document.readyState === "complete") {
+      if (typeof document !== "undefined" && (document.readyState === "complete" || document.readyState === "interactive")) {
         resolve();
         return;
       }
