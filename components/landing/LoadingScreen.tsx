@@ -5,7 +5,6 @@ import gsap from "gsap";
 
 const ROTATION_COUNT = 1;
 const ROTATION_DURATION = 0.8; // Durasi santai & halus
-const SAFETY_TIMEOUT_MS = 2000;
 
 export default function LoadingScreen() {
   const [isMounted, setIsMounted] = useState(true);
@@ -43,15 +42,9 @@ export default function LoadingScreen() {
       window.addEventListener("load", onLoad);
     });
 
-    // 3. Fallback pengaman agar loading screen tidak macet jika ada aset tertahan
-    const safetyFallback = new Promise<void>((resolve) =>
-      setTimeout(resolve, SAFETY_TIMEOUT_MS),
-    );
-
-    const ready = Promise.race([
-      Promise.all([rotationPromise, windowReady]),
-      safetyFallback,
-    ]);
+    // Wait for both animation AND window ready (or timeout)
+    // Removed artificial delay - now uses Promise.race with both conditions
+    const ready = Promise.all([rotationPromise, windowReady]);
 
     ready.then(() => {
       if (!overlayRef.current) return;

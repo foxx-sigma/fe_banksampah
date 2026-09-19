@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Dialog from "@/components/ui/Dialog";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Skeleton from "@/components/ui/Skeleton";
+import FallbackImage from "@/components/ui/FallbackImage";
 import type {
   SetorSampahItem,
   StatusSetor,
@@ -182,65 +183,102 @@ export default function SetoranVerifyDialog({
 
   const totals = detail ? calcTotalReal() : { berat: 0, poin: 0 };
 
-  return (
-    <Dialog open={open} onClose={handleClose} className="max-w-2xl mx-4">
-      <div className="p-6">
-        <h2 className="font-heading font-semibold text-xl text-zinc-900 mb-4">
-          Detail Setoran
-        </h2>
+   return (
+     <Dialog open={open} onClose={handleClose} className="max-w-3xl mx-4">
+       <div className="p-6">
+         <h2 className="font-heading font-semibold text-xl text-zinc-900 mb-4">
+           Detail Setoran
+         </h2>
 
-        {loadingDetail ? (
-          <div className="space-y-4">
-            <Skeleton className="h-5 w-48" />
-            <Skeleton className="h-4 w-36" />
-            <Skeleton className="h-32 w-full" />
-          </div>
-        ) : errorDetail ? (
-          <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
-            {errorDetail}
-          </div>
-        ) : detail ? (
-          <div className="space-y-5">
-            <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-              <div>
-                <span className="text-zinc-500">Kode Setor</span>
-                <p className="font-medium text-zinc-900">{detail.kodeSetor}</p>
-              </div>
-              <div>
-                <span className="text-zinc-500">Nasabah</span>
-                <p className="font-medium text-zinc-900">
-                  {detail.nasabah.namaNasabah}
-                </p>
-              </div>
-              <div>
-                <span className="text-zinc-500">Tanggal</span>
-                <p className="font-medium text-zinc-900">
-                  {formatDate(detail.tanggal)}
-                </p>
-              </div>
-              <div>
-                <span className="text-zinc-500">Status</span>
-                <p>
-                  <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGE[detail.status]}`}
-                  >
-                    {STATUS_LABEL[detail.status]}
-                  </span>
-                </p>
-              </div>
-            </div>
+         {loadingDetail ? (
+           <div className="space-y-4">
+             <Skeleton className="h-5 w-48" />
+             <Skeleton className="h-4 w-36" />
+             <Skeleton className="h-32 w-full" />
+           </div>
+         ) : errorDetail ? (
+           <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg">
+             {errorDetail}
+           </div>
+         ) : detail ? (
+           <div className="space-y-6">
+             {/* Two-column layout for visual balance */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               {/* Left: Photo */}
+               <div className="flex flex-col items-center">
+                 <div className="w-full aspect-video rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-sm">
+                   {detail.foto ? (
+                     <FallbackImage
+                       src={`${process.env.NEXT_PUBLIC_BASE_API_URL}/${detail.foto}`}
+                       alt="Foto Setoran"
+                       className="w-full h-full object-cover"
+                       fallbackClassName="flex items-center justify-center p-6"
+                     />
+                   ) : (
+                     <div className="flex items-center justify-center h-full p-6 text-zinc-400">
+                       <span className="text-center">Tidak ada foto</span>
+                     </div>
+                   )}
+                 </div>
+               </div>
 
-            {detail.catatan && (
-              <div className="text-sm">
-                <span className="text-zinc-500">Catatan Nasabah</span>
-                <p className="text-zinc-700">{detail.catatan}</p>
-              </div>
-            )}
+               {/* Right: Details */}
+               <div className="space-y-4">
+                 <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                   <div>
+                     <span className="text-zinc-500">Kode Setor</span>
+                     <p className="font-medium text-zinc-900">{detail.kodeSetor}</p>
+                   </div>
+                   <div>
+                     <span className="text-zinc-500">Nasabah</span>
+                     <p className="font-medium text-zinc-900">
+                       {detail.nasabah.namaNasabah}
+                     </p>
+                   </div>
+                   <div>
+                     <span className="text-zinc-500">Tanggal</span>
+                     <p className="font-medium text-zinc-900">
+                       {formatDate(detail.tanggal)}
+                     </p>
+                   </div>
+                   <div>
+                     <span className="text-zinc-500">Status</span>
+                     <p>
+                       <span
+                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGE[detail.status]}`}
+                       >
+                         {STATUS_LABEL[detail.status]}
+                       </span>
+                     </p>
+                   </div>
+                 </div>
 
-            <div>
-              <h3 className="text-sm font-medium text-zinc-700 mb-2">
-                Daftar Item Sampah
-              </h3>
+                 {detail.catatan && (
+                   <div className="pt-3 border-t border-zinc-100">
+                     <span className="text-zinc-500 block mb-1">Catatan Nasabah</span>
+                     <p className="text-zinc-700 text-sm">{detail.catatan}</p>
+                   </div>
+                 )}
+
+                 <div className="pt-3 border-t border-zinc-100">
+                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                     <div>
+                       <span className="text-zinc-500">Total Berat (Estimasi)</span>
+                       <p className="font-medium text-zinc-900">{detail.totalBeratKg} kg</p>
+                     </div>
+                     <div>
+                       <span className="text-zinc-500">Estimasi Poin</span>
+                       <p className="font-medium text-zinc-900">{detail.estimasiTotalPoin} poin</p>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+             <div>
+               <h3 className="text-sm font-medium text-zinc-700 mb-2">
+                 Daftar Item Sampah
+               </h3>
               <div className="overflow-x-auto border border-zinc-200 rounded-lg">
                 <table className="w-full text-sm">
                   <thead>
@@ -387,27 +425,33 @@ export default function SetoranVerifyDialog({
                   </div>
                 )}
 
-                <div className="flex justify-end gap-3">
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    disabled={submitting}
-                    className="px-4 py-2 text-sm font-medium text-zinc-700 bg-zinc-100 rounded-lg hover:bg-zinc-200 transition disabled:opacity-50"
-                  >
-                    Batal
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {submitting && (
-                      <LoadingSpinner size={16} className="text-white" />
-                    )}
-                    Simpan Verifikasi
-                  </button>
-                </div>
+                 <div className="flex flex-col sm:flex-row justify-between items-center gap-3 pt-2 border-t border-zinc-100">
+                   <div className="text-xs text-zinc-500">
+                     <span className="block">Total Berat Real: {totals.berat} kg</span>
+                     <span className="block">Total Poin Real: {totals.poin}</span>
+                   </div>
+                   <div className="flex justify-end gap-3 w-full sm:w-auto">
+                     <button
+                       type="button"
+                       onClick={handleClose}
+                       disabled={submitting}
+                       className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 transition disabled:opacity-50"
+                     >
+                       Batal
+                     </button>
+                     <button
+                       type="button"
+                       onClick={handleSubmit}
+                       disabled={submitting}
+                       className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition disabled:opacity-50 shadow-sm"
+                     >
+                       {submitting && (
+                         <LoadingSpinner size={16} className="text-white" />
+                       )}
+                       Simpan Verifikasi
+                     </button>
+                   </div>
+                 </div>
               </div>
             )}
 
@@ -419,11 +463,11 @@ export default function SetoranVerifyDialog({
             )}
 
             {isFinal && (
-              <div className="flex justify-end pt-2">
+              <div className="flex justify-center pt-4 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="px-4 py-2 text-sm font-medium text-zinc-700 bg-zinc-100 rounded-lg hover:bg-zinc-200 transition"
+                  className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 transition"
                 >
                   Tutup
                 </button>

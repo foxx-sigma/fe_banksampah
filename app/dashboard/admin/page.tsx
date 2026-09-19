@@ -10,13 +10,10 @@ import StatCard from "@/components/admin/StatCard";
 import WasteTonChart from "@/components/admin/WasteTonChart";
 import PendingSetoranList from "@/components/admin/PendingSetoranList";
 import { apiGet } from "@/lib/api-client";
-import {
-  DUMMY_STATS,
-  DUMMY_CHART_DATA,
-  DUMMY_PENDING_SETORAN,
-  type AdminOverviewStats,
-  type CategoryTonData,
-  type PendingSetorItem,
+import type {
+  AdminOverviewStats,
+  CategoryTonData,
+  PendingSetorItem,
 } from "@/types/dashboard-admin";
 
 interface StatsApiResponse {
@@ -54,12 +51,16 @@ async function fetchDashboardData() {
     ? { Authorization: `Bearer ${token}` }
     : {};
 
-  const stats: AdminOverviewStats = { ...DUMMY_STATS };
-  let chartData: CategoryTonData[] = [...DUMMY_CHART_DATA];
-  let pendingSetoran: PendingSetorItem[] = [...DUMMY_PENDING_SETORAN];
+  let stats: AdminOverviewStats = {
+    totalNasabah: 0,
+    setoranMasukBulanIni: 0,
+    totalPoinDitukarBulanIni: 0,
+    estimasiPembayaranBulanIni: 0,
+  };
+  let chartData: CategoryTonData[] = [];
+  let pendingSetoran: PendingSetorItem[] = [];
 
   try {
-    // TODO: Ganti dengan data asli dari endpoint
     // 1. Fetch Agregat Stats
     const statsRes = await apiGet<StatsApiResponse>("/api/v1/dashboard/stats", headers);
     if (statsRes && statsRes.data) {
@@ -108,7 +109,9 @@ async function fetchDashboardData() {
     }
 
   } catch (error) {
-    console.error("Gagal fetch data real, menggunakan DUMMY fallback.", error);
+    console.error("Gagal fetch data dashboard admin:", error);
+    // Don't use dummy data - return empty arrays/objects instead
+    // This allows the component to render empty state instead of misleading data
   }
 
   return { stats, chartData, pendingSetoran };

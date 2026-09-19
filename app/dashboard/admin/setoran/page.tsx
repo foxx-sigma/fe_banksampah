@@ -5,6 +5,7 @@ import {
   Eye,
   Funnel,
   CalendarBlank,
+  CheckCircle,
 } from "@phosphor-icons/react";
 import Skeleton from "@/components/ui/Skeleton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -265,16 +266,29 @@ export default function SetoranPage() {
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openDetail(item.id);
-                          }}
-                          className="p-2 text-zinc-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
-                          title="Detail / Verifikasi"
-                        >
-                          <Eye size={18} />
-                        </button>
+                        {item.status === "menunggu_konfirmasi" ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDetail(item.id);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition shadow-sm"
+                          >
+                            <CheckCircle size={14} weight="fill" />
+                            <span>Konfirmasi Setoran</span>
+                          </button>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openDetail(item.id);
+                            }}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 transition"
+                          >
+                            <Eye size={14} />
+                            <span>Lihat Detail</span>
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

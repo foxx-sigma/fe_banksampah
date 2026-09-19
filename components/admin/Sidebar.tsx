@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import {
   SquaresFour,
@@ -9,6 +10,7 @@ import {
   Package,
   Trash,
   Gift,
+  Swap,
   FileText,
   SignOut,
 } from "@phosphor-icons/react";
@@ -25,7 +27,7 @@ const NAV_ITEMS = [
     icon: Users,
   },
   {
-    name: "Setoran",
+    name: "Penukaran",
     href: "/dashboard/admin/setoran",
     icon: Package,
   },
@@ -49,6 +51,70 @@ const NAV_ITEMS = [
 export default function Sidebar() {
   const pathname = usePathname();
   const { logout } = useAuth();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    
+    (async () => {
+      try {
+        const res = await fetch('/api/admin/setor-sampah?status=menunggu_konfirmasi', {
+          credentials: 'include',
+        });
+        const json = await res.json();
+        
+        if (cancelled) return;
+        
+        if (res.ok && json.success) {
+          let count = 0;
+          
+          // Handle different response structures
+          if (Array.isArray(json.data)) {
+            count = json.data.length;
+          } else if (json.data && Array.isArray(json.data.items)) {
+            count = json.data.items.length;
+          } else if (json.data && Array.isArray(json.data.data)) {
+            count = json.data.data.length;
+          }
+          
+          setPendingCount(count);
+        }
+      } catch (error) {
+        console.error('Failed to fetch pending setoran:', error);
+      }
+    })();
+    
+    // Refresh every 30 seconds to get updated notification count
+    const intervalId = setInterval(async () => {
+      try {
+        const res = await fetch('/api/admin/setor-sampah?status=menunggu_konfirmasi', {
+          credentials: 'include',
+        });
+        const json = await res.json();
+        
+        if (res.ok && json.success) {
+          let count = 0;
+          
+          if (Array.isArray(json.data)) {
+            count = json.data.length;
+          } else if (json.data && Array.isArray(json.data.items)) {
+            count = json.data.items.length;
+          } else if (json.data && Array.isArray(json.data.data)) {
+            count = json.data.data.length;
+          }
+          
+          setPendingCount(count);
+        }
+      } catch (error) {
+        // Silently fail for polling
+      }
+    }, 30000);
+    
+    return () => {
+      cancelled = true;
+      clearInterval(intervalId);
+    };
+  }, []);
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-16 md:w-20 bg-white border-r border-zinc-200 flex flex-col items-center py-6 gap-4 z-40">
@@ -61,6 +127,8 @@ export default function Sidebar() {
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
+          const isPenukaran = item.name === "Penukaran";
+          const hasPending = isPenukaran && pendingCount > 0;
 
           return (
             <Link
@@ -79,10 +147,16 @@ export default function Sidebar() {
               
               <Icon size={24} weight={isActive ? "fill" : "regular"} />
 
+              {/* Notification Badge */}
+              {hasPending && (
+                <div className="absolute -top-1 -right-1 bg-red-500 border-2 border-white rounded-full w-3 h-3" />
+              )}
+
               {/* Tooltip */}
               <div className="absolute left-full ml-3 hidden group-hover:flex items-center z-50">
                 <div className="bg-white text-zinc-900 border border-zinc-200 text-sm font-sans px-3 py-1.5 rounded-md whitespace-nowrap shadow-md">
                   {item.name}
+                  {hasPending && <span className="ml-1 text-red-500">({pendingCount})</span>}
                 </div>
               </div>
             </Link>

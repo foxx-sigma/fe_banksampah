@@ -73,8 +73,8 @@ export default function SetorDetailDialog({
     item.totalPoinReal !== null && item.totalPoinReal !== item.estimasiTotalPoin;
 
   return (
-    <Dialog open={open} onClose={onClose} className="max-w-lg mx-4">
-      <div className="p-6 space-y-5">
+    <Dialog open={open} onClose={onClose} className="max-w-3xl mx-4">
+      <div className="p-6 space-y-6">
         <div className="space-y-1">
           <h2 className="text-lg font-semibold text-zinc-900 pr-8">
             Detail Pengajuan
@@ -82,63 +82,86 @@ export default function SetorDetailDialog({
           <p className="text-sm text-zinc-500 tabular-nums">{item.kodeSetor}</p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span
-            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.badge}`}
-          >
-            <StatusIcon size={14} weight="fill" />
-            {cfg.label}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
-              <CalendarBlank size={16} className="text-zinc-500" />
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500">Tanggal Pengajuan</p>
-              <p className="text-sm font-medium text-zinc-900">
-                {formatDate(item.tanggal)}
-              </p>
+        {/* Two-column layout for visual balance */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Left: Photo */}
+          <div className="flex flex-col items-center">
+            <div className="w-full aspect-video rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-sm">
+              <FallbackImage
+                src={
+                  item.foto
+                    ? item.foto.startsWith("http")
+                      ? item.foto
+                      : `${process.env.NEXT_PUBLIC_BASE_API_URL}/${item.foto}`
+                    : undefined
+                }
+                alt="Foto bukti setoran"
+                className="w-full h-full object-cover"
+                fallbackClassName="flex h-full w-full items-center justify-center p-6"
+              />
             </div>
           </div>
 
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
-              <Scales size={16} className="text-zinc-500" />
+          {/* Right: Details */}
+          <div className="space-y-5">
+            <div className="flex items-center gap-2">
+              <span
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${cfg.badge}`}
+              >
+                <StatusIcon size={14} weight="fill" />
+                {cfg.label}
+              </span>
             </div>
-            <div>
-              <p className="text-xs text-zinc-500">Berat Diajukan</p>
-              <p className="text-sm font-medium text-zinc-900 tabular-nums">
-                {item.totalBeratKg} kg
-              </p>
-              {hasTimbangUlang && (
-                <p className="text-xs text-teal-600 tabular-nums mt-0.5">
-                  Hasil timbang: {item.totalBeratKgReal} kg
-                </p>
-              )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
+                  <CalendarBlank size={16} className="text-zinc-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500">Tanggal Pengajuan</p>
+                  <p className="text-sm font-medium text-zinc-900">
+                    {formatDate(item.tanggal)}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
+                  <Scales size={16} className="text-zinc-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500">Berat Diajukan</p>
+                  <p className="text-sm font-medium text-zinc-900 tabular-nums">
+                    {item.totalBeratKg} kg
+                  </p>
+                  {hasTimbangUlang && (
+                    <p className="text-xs text-teal-600 tabular-nums mt-0.5">
+                      Hasil timbang: {item.totalBeratKgReal} kg
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
+                  <Coins size={16} className="text-zinc-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-zinc-500">Estimasi Poin</p>
+                  <p className="text-sm font-medium text-zinc-900 tabular-nums">
+                    {formatNumber(item.estimasiTotalPoin)} poin
+                  </p>
+                  {hasPoinReal && (
+                    <p className="text-xs text-teal-600 tabular-nums mt-0.5">
+                      Poin final: {formatNumber(item.totalPoinReal!)} poin
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
-
-          <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center shrink-0">
-              <Coins size={16} className="text-zinc-500" />
-            </div>
-            <div>
-              <p className="text-xs text-zinc-500">Estimasi Poin</p>
-              <p className="text-sm font-medium text-zinc-900 tabular-nums">
-                {formatNumber(item.estimasiTotalPoin)} poin
-              </p>
-              {hasPoinReal && (
-                <p className="text-xs text-teal-600 tabular-nums mt-0.5">
-                  Poin final: {formatNumber(item.totalPoinReal!)} poin
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
+</div>
         {item.detailSetor.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium text-zinc-700">
@@ -209,27 +232,14 @@ export default function SetorDetailDialog({
           </div>
         )}
 
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm font-medium text-zinc-700">
-            <ImageSquare size={16} />
-            Foto Bukti
-          </div>
-          <div className="rounded-lg border border-zinc-200 overflow-hidden bg-zinc-50 h-52">
-            <FallbackImage
-              src={item.foto || undefined}
-              alt="Foto bukti setoran"
-              className="w-full h-full object-contain"
-              fallbackClassName="flex h-full w-full items-center justify-center p-6"
-            />
-          </div>
+        <div className="pt-4 border-t border-zinc-100">
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-2.5 text-sm font-medium text-zinc-700 bg-white border border-zinc-300 rounded-lg hover:bg-zinc-50 transition"
+          >
+            Tutup
+          </button>
         </div>
-
-        <button
-          onClick={onClose}
-          className="w-full px-4 py-2.5 text-sm font-medium text-white bg-teal-600 rounded-lg hover:bg-teal-700 transition shadow-sm"
-        >
-          Tutup
-        </button>
       </div>
     </Dialog>
   );
