@@ -42,7 +42,7 @@ export default function HeroSection() {
     <section
       id="beranda"
       ref={sectionRef}
-      className="relative w-full overflow-hidden px-6 py-20 sm:py-28"
+      className="relative flex min-h-[100svh] w-full flex-col justify-center overflow-hidden px-6 pt-20 pb-40 sm:pt-28 sm:pb-56"
     >
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
         <h1 className="font-heading font-bold text-4xl leading-tight text-black sm:text-5xl md:text-6xl">
@@ -77,17 +77,6 @@ export default function HeroSection() {
           </button>
         </div>
 
-        <div className="mt-12 flex flex-col items-center gap-4">
-          <p className="font-sans text-xs uppercase tracking-wide text-black/50">
-            Didukung dan Dikembangkan Bersama
-          </p>
-          <div className="flex items-center justify-center">
-            <div className="flex h-14 items-center justify-center rounded-xl bg-gray-50 px-6 py-2 border border-gray-100 shadow-xs">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              
-            </div>
-          </div>
-        </div>
       </div>
     </section>
   );
