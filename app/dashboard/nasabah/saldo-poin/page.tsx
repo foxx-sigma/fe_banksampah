@@ -8,8 +8,8 @@ import {
   ArrowClockwise,
   Eye,
   CheckCircle,
-  Clock,
-  XCircle,
+  Gift,
+  Funnel,
 } from "@phosphor-icons/react";
 import Skeleton from "@/components/ui/Skeleton";
 import SetorDetailDialog from "@/components/nasabah/SetorDetailDialog";
@@ -22,16 +22,57 @@ interface DashboardSummary {
   totalPoinDitukar: number;
 }
 
-const STATUS_BADGE: Record<StatusSetor, string> = {
-  menunggu_konfirmasi: "bg-amber-50 text-amber-700 border border-amber-200",
-  diverifikasi: "bg-sky-50 text-sky-700 border border-sky-200",
-  selesai: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  ditolak: "bg-rose-50 text-rose-700 border border-rose-200",
+interface PenukaranItem {
+  id: string;
+  kodePenukaran: string;
+  tanggal: string;
+  status: "diproses" | "selesai";
+  poinDigunakan: number;
+  catatan: string | null;
+  hadiah: {
+    id: string;
+    namaHadiah: string;
+    poinDibutuhkan: number;
+  };
+}
+
+type UnifiedTransaction =
+  | {
+      type: "setoran";
+      id: string;
+      kode: string;
+      tanggal: string;
+      status: StatusSetor;
+      beratEstimasi: number;
+      beratReal: number | null;
+      poin: number;
+      isPositive: true;
+      rawSetor: SetorSampahItem;
+    }
+  | {
+      type: "penukaran";
+      id: string;
+      kode: string;
+      tanggal: string;
+      status: "diproses" | "selesai";
+      namaHadiah: string;
+      poin: number;
+      isPositive: false;
+      rawPenukaran: PenukaranItem;
+    };
+
+const STATUS_BADGE: Record<string, string> = {
+  menunggu_konfirmasi: "bg-zinc-100 text-zinc-700 border border-zinc-200",
+  diverifikasi: "bg-zinc-100 text-zinc-700 border border-zinc-200",
+  diproses: "bg-zinc-100 text-zinc-700 border border-zinc-200",
+  selesai: "bg-teal-50 text-teal-700 border border-teal-200",
+  ditolak: "bg-red-50 text-red-700 border border-red-200",
 };
 
-const STATUS_LABEL: Record<StatusSetor, string> = {
+const STATUS_LABEL: Record<string, string> = {
   menunggu_konfirmasi: "Menunggu Konfirmasi",
   diverifikasi: "Diverifikasi",
+  diproses: "Sedang Diproses",
   selesai: "Selesai",
   ditolak: "Ditolak",
 };
@@ -52,20 +93,15 @@ const formatWeight = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value);
 
-const STATUS_FILTER_OPTIONS: { value: string; label: string }[] = [
-  { value: "", label: "Semua Status" },
-  { value: "menunggu_konfirmasi", label: "Menunggu Konfirmasi" },
-  { value: "diverifikasi", label: "Diverifikasi" },
-  { value: "selesai", label: "Selesai" },
-  { value: "ditolak", label: "Ditolak" },
-];
-
 export default function SaldoPoinPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(true);
   const [summaryError, setSummaryError] = useState("");
 
-  const [allItems, setAllItems] = useState<SetorSampahItem[]>([]);
+  const [setorItems, setSetorItems] = useState<SetorSampahItem[]>([]);
+  const [penukaranItems, setPenukaranItems] = useState<PenukaranItem[]>([]);
+  
+  const [tipeFilter, setTipeFilter] = useState<"all" | "setoran" | "penukaran">("all");
   const [statusFilter, setStatusFilter] = useState("");
   const [bulanFilter, setBulanFilter] = useState("");
   const [loading, setLoading] = useState(true);
@@ -73,7 +109,7 @@ export default function SaldoPoinPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<SetorSampahItem | null>(null);
+  const [selectedSetorItem, setSelectedSetorItem] = useState<SetorSampahItem | null>(null);
 
   // Fetch summary data
   useEffect(() => {
@@ -103,7 +139,7 @@ export default function SaldoPoinPage() {
     };
   }, [refreshKey]);
 
-  // Fetch histori penyetoran
+  // Fetch histori transaksi (setoran dan penukaran)
   useEffect(() => {
     let cancelled = false;
     (async () => {
@@ -111,37 +147,51 @@ export default function SaldoPoinPage() {
       setError("");
       try {
         const params = new URLSearchParams();
-        if (statusFilter) params.set("status", statusFilter);
         if (bulanFilter) params.set("bulan", bulanFilter);
 
         const query = params.toString() ? `?${params}` : "";
-        const res = await fetch(`/api/nasabah/setor-sampah${query}`, {
-          credentials: "include",
-        });
-        const json = await res.json();
+
+        const [setorRes, penukaranRes] = await Promise.all([
+          fetch(`/api/nasabah/setor-sampah${query}`, { credentials: "include" }),
+          fetch(`/api/nasabah/penukaran-poin/my-penukaran${query}`, { credentials: "include" }),
+        ]);
+
+        const setorJson = await setorRes.json().catch(() => ({}));
+        const penukaranJson = await penukaranRes.json().catch(() => ({}));
 
         if (cancelled) return;
 
-        if (!res.ok || !json.success) {
-          setError(json.message || "Gagal memuat data histori penyetoran.");
-          setAllItems([]);
-          return;
+        let loadedSetor: SetorSampahItem[] = [];
+        if (setorRes.ok && setorJson.success) {
+          const data = setorJson.data;
+          loadedSetor = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.items)
+            ? data.items
+            : Array.isArray(data?.data)
+            ? data.data
+            : [];
         }
 
-        const data = json.data;
-        if (Array.isArray(data)) {
-          setAllItems(data);
-        } else if (data && Array.isArray(data.items)) {
-          setAllItems(data.items);
-        } else if (data && Array.isArray(data.data)) {
-          setAllItems(data.data);
-        } else {
-          setAllItems([]);
+        let loadedPenukaran: PenukaranItem[] = [];
+        if (penukaranRes.ok && penukaranJson.success) {
+          const data = penukaranJson.data;
+          loadedPenukaran = Array.isArray(data)
+            ? data
+            : Array.isArray(data?.items)
+            ? data.items
+            : Array.isArray(data?.data)
+            ? data.data
+            : [];
         }
+
+        setSetorItems(loadedSetor);
+        setPenukaranItems(loadedPenukaran);
       } catch {
         if (!cancelled) {
-          setError("Terjadi kesalahan jaringan.");
-          setAllItems([]);
+          setError("Terjadi kesalahan jaringan saat memuat histori.");
+          setSetorItems([]);
+          setPenukaranItems([]);
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -150,46 +200,99 @@ export default function SaldoPoinPage() {
     return () => {
       cancelled = true;
     };
-  }, [statusFilter, bulanFilter, refreshKey]);
+  }, [bulanFilter, refreshKey]);
 
   const handleRetry = useCallback(() => {
     setRefreshKey((k) => k + 1);
   }, []);
 
-  function openDetail(item: SetorSampahItem) {
-    setSelectedItem(item);
+  function openDetailSetor(item: SetorSampahItem) {
+    setSelectedSetorItem(item);
     setDialogOpen(true);
   }
 
-  // Monthly stats calculated from items
+  // Combine and sort transactions chronologically
+  const unifiedTransactions = useMemo((): UnifiedTransaction[] => {
+    const list: UnifiedTransaction[] = [];
+
+    if (tipeFilter === "all" || tipeFilter === "setoran") {
+      for (const s of setorItems) {
+        list.push({
+          type: "setoran",
+          id: s.id,
+          kode: s.kodeSetor,
+          tanggal: s.tanggal,
+          status: s.status,
+          beratEstimasi: s.totalBeratKg,
+          beratReal: s.totalBeratKgReal,
+          poin: s.totalPoinReal !== null && s.totalPoinReal !== undefined ? s.totalPoinReal : s.estimasiTotalPoin,
+          isPositive: true,
+          rawSetor: s,
+        });
+      }
+    }
+
+    if (tipeFilter === "all" || tipeFilter === "penukaran") {
+      for (const p of penukaranItems) {
+        list.push({
+          type: "penukaran",
+          id: p.id,
+          kode: p.kodePenukaran,
+          tanggal: p.tanggal,
+          status: p.status,
+          namaHadiah: p.hadiah?.namaHadiah || "Hadiah",
+          poin: p.poinDigunakan,
+          isPositive: false,
+          rawPenukaran: p,
+        });
+      }
+    }
+
+    // Apply status filter if selected
+    const filtered = statusFilter
+      ? list.filter((item) => item.status === statusFilter)
+      : list;
+
+    // Sort descending by date
+    return filtered.sort(
+      (a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
+    );
+  }, [setorItems, penukaranItems, tipeFilter, statusFilter]);
+
+  // Monthly statistics summary
   const monthlyStats = useMemo(() => {
-    const verifiedItems = allItems.filter(
+    const verifiedSetor = setorItems.filter(
       (item) => item.status === "selesai" || item.status === "diverifikasi"
     );
-    const totalBerat = verifiedItems.reduce(
+    const totalBerat = verifiedSetor.reduce(
       (acc, cur) => acc + (cur.totalBeratKgReal ?? cur.totalBeratKg),
       0
     );
-    const totalPoin = verifiedItems.reduce(
+    const totalPoinMasuk = verifiedSetor.reduce(
       (acc, cur) => acc + (cur.totalPoinReal ?? cur.estimasiTotalPoin),
       0
     );
+    const totalPoinKeluar = penukaranItems
+      .filter((p) => p.status === "selesai")
+      .reduce((acc, cur) => acc + cur.poinDigunakan, 0);
+
     return {
       totalBerat: Math.round(totalBerat * 100) / 100,
-      totalPoin,
-      totalSetoran: allItems.length,
-      totalSelesai: verifiedItems.length,
+      totalPoinMasuk,
+      totalPoinKeluar,
+      countSetoran: setorItems.length,
+      countPenukaran: penukaranItems.length,
     };
-  }, [allItems]);
+  }, [setorItems, penukaranItems]);
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
         <h1 className="font-heading font-semibold text-3xl text-zinc-900">
-          Saldo & Histori Penyetoran
+          Saldo & Histori Transaksi
         </h1>
         <p className="font-sans text-zinc-500 text-sm mt-1">
-          Pantau saldo poin aktif dan riwayat seluruh transaksi penyetoran sampah Anda.
+          Pantau saldo poin aktif, riwayat perolehan setoran sampah, serta penukaran hadiah Anda.
         </p>
       </div>
 
@@ -223,8 +326,8 @@ export default function SaldoPoinPage() {
 
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50">
-              <CheckCircle size={24} weight="fill" className="text-emerald-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-50">
+              <CheckCircle size={24} weight="fill" className="text-teal-600" />
             </div>
             <span className="text-sm font-medium text-zinc-500">
               Total Poin Didapat
@@ -240,7 +343,7 @@ export default function SaldoPoinPage() {
           ) : (
             <div className="mt-4">
               <p className="text-3xl font-bold text-zinc-900">
-                {formatNumber(summary?.totalPoinDidapat ?? 0)}
+                +{formatNumber(summary?.totalPoinDidapat ?? 0)}
               </p>
               <p className="mt-1 text-xs text-zinc-500">akumulasi perolehan</p>
             </div>
@@ -249,8 +352,8 @@ export default function SaldoPoinPage() {
 
         <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50">
-              <Coins size={24} weight="fill" className="text-emerald-600" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-teal-50">
+              <Gift size={24} weight="fill" className="text-teal-600" />
             </div>
             <span className="text-sm font-medium text-zinc-500">
               Total Poin Ditukar
@@ -266,7 +369,7 @@ export default function SaldoPoinPage() {
           ) : (
             <div className="mt-4">
               <p className="text-3xl font-bold text-zinc-900">
-                {formatNumber(summary?.totalPoinDitukar ?? 0)}
+                -{formatNumber(summary?.totalPoinDitukar ?? 0)}
               </p>
               <p className="mt-1 text-xs text-zinc-500">poin telah dibelanjakan</p>
             </div>
@@ -301,30 +404,57 @@ export default function SaldoPoinPage() {
         </div>
       </div>
 
-      {/* Filter & Tabel Histori Penyetoran */}
+      {/* Filter & Tabel Histori Transaksi Gabungan */}
       <div className="bg-white border border-zinc-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-zinc-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <div>
-            <h2 className="font-semibold text-zinc-900 text-base">
-              Histori Penyetoran Sampah
-            </h2>
-            <p className="text-xs text-zinc-500 mt-0.5">
-              {bulanFilter ? `Menampilkan data bulan ${bulanFilter}` : "Seluruh riwayat transaksi"}
-            </p>
+        <div className="p-4 border-b border-zinc-100 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          {/* Tipe Selector Buttons */}
+          <div className="flex rounded-lg border border-zinc-200 p-1 bg-zinc-50/50 w-full sm:w-auto">
+            <button
+              onClick={() => setTipeFilter("all")}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-md transition ${
+                tipeFilter === "all"
+                  ? "bg-white text-zinc-900 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-900"
+              }`}
+            >
+              Semua Transaksi
+            </button>
+            <button
+              onClick={() => setTipeFilter("setoran")}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-md transition ${
+                tipeFilter === "setoran"
+                  ? "bg-white text-teal-700 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-900"
+              }`}
+            >
+              Setoran Masuk
+            </button>
+            <button
+              onClick={() => setTipeFilter("penukaran")}
+              className={`flex-1 sm:flex-initial px-3.5 py-1.5 text-xs sm:text-sm font-medium rounded-md transition ${
+                tipeFilter === "penukaran"
+                  ? "bg-white text-red-600 shadow-sm"
+                  : "text-zinc-500 hover:text-zinc-900"
+              }`}
+            >
+              Penukaran Hadiah
+            </button>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+          {/* Filter Status & Bulan */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
             <div className="relative flex-1 sm:flex-initial">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full sm:w-auto rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white"
               >
-                {STATUS_FILTER_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
+                <option value="">Semua Status</option>
+                <option value="menunggu_konfirmasi">Menunggu Konfirmasi</option>
+                <option value="diverifikasi">Diverifikasi</option>
+                <option value="diproses">Diproses</option>
+                <option value="selesai">Selesai</option>
+                <option value="ditolak">Ditolak</option>
               </select>
             </div>
 
@@ -340,11 +470,12 @@ export default function SaldoPoinPage() {
                 className="w-full sm:w-auto rounded-lg border border-zinc-300 pl-10 pr-4 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white"
               />
             </div>
-            {(statusFilter || bulanFilter) && (
+            {(statusFilter || bulanFilter || tipeFilter !== "all") && (
               <button
                 onClick={() => {
                   setStatusFilter("");
                   setBulanFilter("");
+                  setTipeFilter("all");
                 }}
                 className="text-sm font-medium text-teal-600 hover:text-teal-700 transition whitespace-nowrap"
               >
@@ -354,20 +485,20 @@ export default function SaldoPoinPage() {
           </div>
         </div>
 
-        {/* Ringkasan Filter Bulan Aktif jika dipilih */}
-        {bulanFilter && !loading && allItems.length > 0 && (
+        {/* Ringkasan Filter Bulan Aktif */}
+        {bulanFilter && !loading && (
           <div className="bg-teal-50/60 border-b border-teal-100 px-4 py-3 flex flex-wrap gap-4 text-xs sm:text-sm text-teal-800">
             <div>
               <span className="font-medium text-teal-900">Total Setoran: </span>
-              {monthlyStats.totalSetoran} transaksi
-            </div>
-            <div>
-              <span className="font-medium text-teal-900">Berat Timbang: </span>
-              {formatWeight(monthlyStats.totalBerat)} kg
+              {monthlyStats.countSetoran} transaksi ({formatWeight(monthlyStats.totalBerat)} kg)
             </div>
             <div>
               <span className="font-medium text-teal-900">Poin Diperoleh: </span>
-              {formatNumber(monthlyStats.totalPoin)} poin
+              +{formatNumber(monthlyStats.totalPoinMasuk)} poin
+            </div>
+            <div>
+              <span className="font-medium text-teal-900">Poin Ditukar: </span>
+              -{formatNumber(monthlyStats.totalPoinKeluar)} poin
             </div>
           </div>
         )}
@@ -389,11 +520,11 @@ export default function SaldoPoinPage() {
           <table className="w-full text-sm text-left">
             <thead>
               <tr className="border-b border-zinc-100 bg-zinc-50/50">
-                <th className="font-medium text-zinc-500 px-4 py-3">Kode Setor</th>
+                <th className="font-medium text-zinc-500 px-4 py-3">Tipe</th>
+                <th className="font-medium text-zinc-500 px-4 py-3">Kode Transaksi</th>
                 <th className="font-medium text-zinc-500 px-4 py-3">Tanggal</th>
-                <th className="font-medium text-zinc-500 px-4 py-3 text-right">Berat Estimasi</th>
-                <th className="font-medium text-zinc-500 px-4 py-3 text-right">Berat Aktual</th>
-                <th className="font-medium text-zinc-500 px-4 py-3 text-right">Perolehan Poin</th>
+                <th className="font-medium text-zinc-500 px-4 py-3">Keterangan</th>
+                <th className="font-medium text-zinc-500 px-4 py-3 text-right">Mutasi Poin</th>
                 <th className="font-medium text-zinc-500 px-4 py-3 text-center">Status</th>
                 <th className="font-medium text-zinc-500 px-4 py-3 text-center">Aksi</th>
               </tr>
@@ -402,70 +533,84 @@ export default function SaldoPoinPage() {
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-zinc-50">
+                    <td className="px-4 py-3"><Skeleton className="h-5 w-20 rounded-md" /></td>
                     <td className="px-4 py-3"><Skeleton className="h-4 w-28" /></td>
                     <td className="px-4 py-3"><Skeleton className="h-4 w-24" /></td>
-                    <td className="px-4 py-3"><Skeleton className="h-4 w-16 ml-auto" /></td>
-                    <td className="px-4 py-3"><Skeleton className="h-4 w-16 ml-auto" /></td>
+                    <td className="px-4 py-3"><Skeleton className="h-4 w-32" /></td>
                     <td className="px-4 py-3"><Skeleton className="h-4 w-16 ml-auto" /></td>
                     <td className="px-4 py-3"><Skeleton className="h-5 w-24 mx-auto rounded-full" /></td>
                     <td className="px-4 py-3"><Skeleton className="h-4 w-10 mx-auto" /></td>
                   </tr>
                 ))
-              ) : allItems.length === 0 ? (
+              ) : unifiedTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-12 text-zinc-500 font-sans">
-                    {bulanFilter
-                      ? "Tidak ada histori penyetoran pada bulan yang dipilih."
-                      : "Belum ada histori penyetoran sampah."}
+                    {bulanFilter || statusFilter || tipeFilter !== "all"
+                      ? "Tidak ada transaksi ditemukan untuk filter ini."
+                      : "Belum ada histori transaksi penyetoran atau penukaran."}
                   </td>
                 </tr>
               ) : (
-                allItems.map((item) => (
+                unifiedTransactions.map((item) => (
                   <tr
-                    key={item.id}
-                    className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors cursor-pointer"
-                    onClick={() => openDetail(item)}
+                    key={`${item.type}-${item.id}`}
+                    className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors"
                   >
+                    <td className="px-4 py-3 font-medium">
+                      {item.type === "setoran" ? (
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-teal-50 text-teal-700">
+                          <Package size={14} weight="fill" /> Setor
+                        </span>
+                      ) : (
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold bg-red-50 text-red-700">
+                            <Gift size={14} weight="fill" /> Tukar
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 font-medium text-zinc-900">
-                      {item.kodeSetor}
+                      {item.kode}
                     </td>
                     <td className="px-4 py-3 text-zinc-600">
                       {formatDate(item.tanggal)}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-600 tabular-nums">
-                      {formatWeight(item.totalBeratKg)} kg
+                    <td className="px-4 py-3 text-zinc-600">
+                      {item.type === "setoran" ? (
+                        item.beratReal !== null
+                          ? `Timbang: ${formatWeight(item.beratReal)} kg`
+                          : `Est: ${formatWeight(item.beratEstimasi)} kg`
+                      ) : (
+                        item.namaHadiah
+                      )}
                     </td>
-                    <td className="px-4 py-3 text-right text-zinc-900 font-medium tabular-nums">
-                      {item.totalBeratKgReal !== null
-                        ? `${formatWeight(item.totalBeratKgReal)} kg`
-                        : "-"}
-                    </td>
-                    <td className="px-4 py-3 text-right text-teal-700 font-medium tabular-nums">
-                      {item.totalPoinReal !== null
-                        ? formatNumber(item.totalPoinReal)
-                        : formatNumber(item.estimasiTotalPoin)}
+                    <td className="px-4 py-3 text-right font-medium tabular-nums">
+                      {item.isPositive ? (
+                        <span className="text-teal-700">+{formatNumber(item.poin)}</span>
+                      ) : (
+                        <span className="text-red-600">-{formatNumber(item.poin)}</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span
                         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          STATUS_BADGE[item.status]
+                          STATUS_BADGE[item.status] || "bg-zinc-100 text-zinc-700"
                         }`}
                       >
-                        {STATUS_LABEL[item.status]}
+                        {STATUS_LABEL[item.status] || item.status}
                       </span>
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-center">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            openDetail(item);
-                          }}
-                          className="p-2 text-zinc-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
-                          title="Lihat Detail Transaksi"
-                        >
-                          <Eye size={18} />
-                        </button>
+                        {item.type === "setoran" ? (
+                          <button
+                            onClick={() => openDetailSetor(item.rawSetor)}
+                            className="p-2 text-zinc-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
+                            title="Lihat Detail Transaksi"
+                          >
+                            <Eye size={18} />
+                          </button>
+                        ) : (
+                          <span className="text-xs text-zinc-400 italic">-</span>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -491,23 +636,36 @@ export default function SaldoPoinPage() {
                 </div>
               </div>
             ))
-          ) : allItems.length === 0 ? (
+          ) : unifiedTransactions.length === 0 ? (
             <div className="py-8 text-center text-zinc-500 text-sm">
-              {bulanFilter
-                ? "Tidak ada histori penyetoran pada bulan yang dipilih."
-                : "Belum ada histori penyetoran sampah."}
+              {bulanFilter || statusFilter || tipeFilter !== "all"
+                ? "Tidak ada transaksi ditemukan untuk filter ini."
+                : "Belum ada histori transaksi penyetoran atau penukaran."}
             </div>
           ) : (
-            allItems.map((item) => (
+            unifiedTransactions.map((item) => (
               <div
-                key={item.id}
-                onClick={() => openDetail(item)}
-                className="border border-zinc-200 rounded-xl p-4 shadow-sm hover:border-teal-300 transition-colors cursor-pointer space-y-3"
+                key={`${item.type}-${item.id}`}
+                onClick={() => item.type === "setoran" && openDetailSetor(item.rawSetor)}
+                className={`border border-zinc-200 rounded-xl p-4 shadow-sm transition-colors space-y-3 ${
+                  item.type === "setoran" ? "cursor-pointer hover:border-teal-300" : ""
+                }`}
               >
                 <div className="flex justify-between items-start">
                   <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      {item.type === "setoran" ? (
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-700">
+                          Setor Sampah
+                        </span>
+                      ) : (
+                          <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-red-50 text-red-700">
+                            Tukar Hadiah
+                        </span>
+                      )}
+                    </div>
                     <p className="font-medium text-zinc-900 text-sm">
-                      {item.kodeSetor}
+                      {item.kode}
                     </p>
                     <p className="text-xs text-zinc-500 mt-0.5">
                       {formatDate(item.tanggal)}
@@ -515,28 +673,32 @@ export default function SaldoPoinPage() {
                   </div>
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
-                      STATUS_BADGE[item.status]
+                      STATUS_BADGE[item.status] || "bg-zinc-100 text-zinc-700"
                     }`}
                   >
-                    {STATUS_LABEL[item.status]}
+                    {STATUS_LABEL[item.status] || item.status}
                   </span>
                 </div>
                 
                 <div className="pt-3 border-t border-zinc-100 flex justify-between items-center text-sm">
                   <div className="text-zinc-600">
-                    <span className="text-xs text-zinc-400 block mb-0.5">Berat Aktual</span>
-                    <span className="font-medium text-zinc-900 tabular-nums">
-                      {item.totalBeratKgReal !== null
-                        ? `${formatWeight(item.totalBeratKgReal)} kg`
-                        : `${formatWeight(item.totalBeratKg)} kg (est)`}
+                    <span className="text-xs text-zinc-400 block mb-0.5">Keterangan</span>
+                    <span className="font-medium text-zinc-900 text-xs sm:text-sm">
+                      {item.type === "setoran"
+                        ? item.beratReal !== null
+                          ? `${formatWeight(item.beratReal)} kg`
+                          : `${formatWeight(item.beratEstimasi)} kg (est)`
+                        : item.namaHadiah}
                     </span>
                   </div>
                   <div className="text-right">
-                    <span className="text-xs text-zinc-400 block mb-0.5">Perolehan Poin</span>
-                    <span className="font-medium text-teal-700 tabular-nums">
-                      {item.totalPoinReal !== null
-                        ? formatNumber(item.totalPoinReal)
-                        : formatNumber(item.estimasiTotalPoin)}
+                    <span className="text-xs text-zinc-400 block mb-0.5">Poin</span>
+                    <span
+                      className={`font-medium tabular-nums ${
+                        item.isPositive ? "text-teal-700" : "text-red-600"
+                      }`}
+                    >
+                      {item.isPositive ? `+${formatNumber(item.poin)}` : `-${formatNumber(item.poin)}`}
                     </span>
                   </div>
                 </div>
@@ -550,9 +712,9 @@ export default function SaldoPoinPage() {
         open={dialogOpen}
         onClose={() => {
           setDialogOpen(false);
-          setSelectedItem(null);
+          setSelectedSetorItem(null);
         }}
-        item={selectedItem}
+        item={selectedSetorItem}
       />
     </div>
   );

@@ -61,7 +61,7 @@ export default function PendingSetoranList({ items }: PendingSetoranListProps) {
                   <span className="font-sans font-medium text-zinc-900 line-clamp-1">
                     {item.namaNasabah}
                   </span>
-                  <span className="text-xs font-sans text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded">
+                  <span className="text-xs font-sans text-zinc-600 bg-zinc-100 px-2 py-0.5 rounded">
                     {item.status.replace(/_/g, " ").toUpperCase()}
                   </span>
                 </div>

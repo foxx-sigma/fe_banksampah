@@ -245,7 +245,7 @@ export default function HadiahPage() {
                     </td>
                     <td className="px-4 py-3 text-right">
                       {item.stok === 0 ? (
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-700">
                           Habis
                         </span>
                       ) : (

@@ -21,10 +21,10 @@ const STATUS_FILTER_OPTIONS: { value: string; label: string }[] = [
 ];
 
 const STATUS_BADGE: Record<StatusSetor, string> = {
-  menunggu_konfirmasi: "bg-amber-50 text-amber-700 border border-amber-200",
-  diverifikasi: "bg-sky-50 text-sky-700 border border-sky-200",
-  selesai: "bg-emerald-50 text-emerald-700 border border-emerald-200",
-  ditolak: "bg-rose-50 text-rose-700 border border-rose-200",
+  menunggu_konfirmasi: "bg-zinc-100 text-zinc-700 border border-zinc-200",
+  diverifikasi: "bg-zinc-100 text-zinc-700 border border-zinc-200",
+  selesai: "bg-teal-50 text-teal-700 border border-teal-200",
+  ditolak: "bg-red-50 text-red-700 border border-red-200",
 };
 
 const STATUS_LABEL: Record<StatusSetor, string> = {

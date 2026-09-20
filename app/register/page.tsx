@@ -138,7 +138,7 @@ export default function RegisterPage() {
         )}
 
         {success && (
-          <div className="mb-4 rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
+          <div className="mb-4 rounded-lg border border-teal-200 bg-teal-50 px-4 py-3 text-sm text-teal-700">
             {success}
           </div>
         )}

@@ -24,10 +24,10 @@ import type {
 const LIMIT = 10;
 
 const JENIS_BADGE: Record<JenisSampah, string> = {
-  plastik: "bg-teal-50 text-teal-700",
-  kertas: "bg-amber-50 text-amber-700",
-  logam: "bg-slate-100 text-slate-700",
-  kaca: "bg-emerald-50 text-emerald-700",
+  plastik: "bg-teal-50 text-teal-700 border-teal-200",
+  kertas: "bg-teal-50 text-teal-700 border-teal-200",
+  logam: "bg-teal-50 text-teal-700 border-teal-200",
+  kaca: "bg-teal-50 text-teal-700 border-teal-200",
 };
 
 const JENIS_LABEL: Record<JenisSampah, string> = {

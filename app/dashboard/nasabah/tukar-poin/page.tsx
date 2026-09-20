@@ -322,7 +322,7 @@ export default function TukarPoinPage() {
                     <span
                       className={`text-xs font-medium px-2 py-1 rounded-md ${
                         hadiah.stok > 0
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          ? "bg-teal-50 text-teal-700 border border-teal-200"
                           : "bg-red-50 text-red-600 border border-red-200"
                       }`}
                     >
@@ -466,8 +466,8 @@ export default function TukarPoinPage() {
         className="max-w-sm mx-4 sm:mx-auto"
       >
         <div className="p-6 text-center space-y-4">
-          <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto">
-            <CheckCircle size={32} weight="fill" className="text-emerald-600" />
+          <div className="w-14 h-14 rounded-full bg-teal-100 flex items-center justify-center mx-auto">
+            <CheckCircle size={32} weight="fill" className="text-teal-600" />
           </div>
           <div>
             <h2 className="font-heading font-semibold text-lg text-zinc-900">

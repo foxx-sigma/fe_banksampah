@@ -17,9 +17,9 @@ import type {
 
 const JENIS_BADGE: Record<JenisSampah, string> = {
   plastik: "bg-teal-50 text-teal-700 border-teal-200",
-  kertas: "bg-amber-50 text-amber-700 border-amber-200",
-  logam: "bg-slate-100 text-slate-700 border-slate-200",
-  kaca: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  kertas: "bg-teal-50 text-teal-700 border-teal-200",
+  logam: "bg-teal-50 text-teal-700 border-teal-200",
+  kaca: "bg-teal-50 text-teal-700 border-teal-200",
 };
 
 const JENIS_LABEL: Record<JenisSampah, string> = {

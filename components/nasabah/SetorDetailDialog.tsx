@@ -28,22 +28,22 @@ const STATUS_CONFIG: Record<
 > = {
   menunggu_konfirmasi: {
     label: "Menunggu Konfirmasi",
-    badge: "bg-amber-50 text-amber-700 border border-amber-200",
+    badge: "bg-zinc-100 text-zinc-700 border border-zinc-200",
     icon: ClockCounterClockwise,
   },
   diverifikasi: {
     label: "Diverifikasi",
-    badge: "bg-sky-50 text-sky-700 border border-sky-200",
+    badge: "bg-zinc-100 text-zinc-700 border border-zinc-200",
     icon: CheckCircle,
   },
   selesai: {
     label: "Selesai",
-    badge: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+    badge: "bg-teal-50 text-teal-700 border border-teal-200",
     icon: SealCheck,
   },
   ditolak: {
     label: "Ditolak",
-    badge: "bg-rose-50 text-rose-700 border border-rose-200",
+    badge: "bg-red-50 text-red-700 border border-red-200",
     icon: XCircle,
   },
 };

@@ -37,8 +37,8 @@ interface PenukaranItem {
 }
 
 const STATUS_BADGE: Record<StatusPenukaran, string> = {
-  diproses: "bg-amber-50 text-amber-700 border border-amber-200",
-  selesai: "bg-emerald-50 text-emerald-700 border border-emerald-200",
+  diproses: "bg-zinc-100 text-zinc-700 border border-zinc-200",
+  selesai: "bg-teal-50 text-teal-700 border border-teal-200",
 };
 
 const STATUS_LABEL: Record<StatusPenukaran, string> = {
@@ -311,7 +311,7 @@ export default function AdminPenukaranPage() {
                     <td className="px-4 py-3 text-zinc-600">
                       {formatDate(item.tanggal)}
                     </td>
-                    <td className="px-4 py-3 text-right text-teal-700 font-medium tabular-nums">
+                    <td className="px-4 py-3 text-right text-red-600 font-medium tabular-nums">
                       {formatNumber(item.poinDigunakan)}
                     </td>
                     <td className="px-4 py-3 text-center">
@@ -372,7 +372,7 @@ export default function AdminPenukaranPage() {
             <p className="text-sm text-zinc-600">
               Konfirmasi bahwa hadiah sudah diserahkan kepada nasabah. Status penukaran
               akan diubah menjadi{" "}
-              <span className="font-semibold text-emerald-700">Selesai</span> dan tidak
+              <span className="font-semibold text-teal-700">Selesai</span> dan tidak
               dapat diubah kembali.
             </p>
 

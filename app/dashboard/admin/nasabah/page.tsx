@@ -8,9 +8,11 @@ import {
   Plus,
   CaretLeft,
   CaretRight,
+  User,
 } from "@phosphor-icons/react";
 import Skeleton from "@/components/ui/Skeleton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import FallbackImage from "@/components/ui/FallbackImage";
 import NasabahFormDialog from "@/components/admin/nasabah/NasabahFormDialog";
 import NasabahDeleteDialog from "@/components/admin/nasabah/NasabahDeleteDialog";
 import type { NasabahItem, NasabahListMeta } from "@/types/nasabah";
@@ -226,7 +228,25 @@ export default function NasabahPage() {
                     className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors"
                   >
                     <td className="px-4 py-3 font-medium text-zinc-900">
-                      {item.namaNasabah}
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-teal-50 border border-teal-100 shrink-0 flex items-center justify-center">
+                          {item.foto ? (
+                            <FallbackImage
+                              src={
+                                item.foto.startsWith("http")
+                                  ? item.foto
+                                  : `${(process.env.NEXT_PUBLIC_BASE_API_URL ?? "").replace(/\/$/, "")}/${item.foto.replace(/^\//, "")}`
+                              }
+                              alt={item.namaNasabah}
+                              className="w-full h-full object-cover"
+                              fallbackClassName="flex items-center justify-center text-teal-600 font-bold text-xs"
+                            />
+                          ) : (
+                            <User size={16} className="text-teal-600" />
+                          )}
+                        </div>
+                        <span>{item.namaNasabah}</span>
+                      </div>
                     </td>
                     <td className="px-4 py-3 text-zinc-600">
                       {item.user?.username || "-"}
