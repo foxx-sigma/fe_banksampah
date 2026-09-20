@@ -42,6 +42,11 @@ const NAV_ITEMS = [
     icon: Gift,
   },
   {
+    name: "Penukaran Poin",
+    href: "/dashboard/admin/penukaran",
+    icon: Swap,
+  },
+  {
     name: "Rekapitulasi",
     href: "/dashboard/admin/rekapitulasi",
     icon: FileText,

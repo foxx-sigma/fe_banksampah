@@ -13,6 +13,9 @@ import {
 } from "@phosphor-icons/react";
 import Skeleton from "@/components/ui/Skeleton";
 import SetorDetailDialog from "@/components/nasabah/SetorDetailDialog";
+import PenukaranDetailDialog, {
+  type PenukaranDetailItem,
+} from "@/components/nasabah/PenukaranDetailDialog";
 import type { SetorSampahItem, StatusSetor } from "@/types/setor-sampah";
 
 interface DashboardSummary {
@@ -107,9 +110,13 @@ export default function SaldoPoinPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
-
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedSetorItem, setSelectedSetorItem] = useState<SetorSampahItem | null>(null);
+  const [selectedSetorItem, setSelectedSetorItem] =
+    useState<SetorSampahItem | null>(null);
+
+  const [penukaranDialogOpen, setPenukaranDialogOpen] = useState(false);
+  const [selectedPenukaranItem, setSelectedPenukaranItem] =
+    useState<PenukaranDetailItem | null>(null);
 
   // Fetch summary data
   useEffect(() => {
@@ -209,6 +216,27 @@ export default function SaldoPoinPage() {
   function openDetailSetor(item: SetorSampahItem) {
     setSelectedSetorItem(item);
     setDialogOpen(true);
+  }
+
+  function openDetailPenukaran(item: {
+    id: string;
+    kode: string;
+    tanggal: string;
+    status: "diproses" | "selesai";
+    namaHadiah: string;
+    poin: number;
+    rawPenukaran: PenukaranItem;
+  }) {
+    setSelectedPenukaranItem({
+      id: item.id,
+      kode: item.kode,
+      tanggal: item.tanggal,
+      status: item.status,
+      namaHadiah: item.namaHadiah,
+      poin: item.poin,
+      catatan: item.rawPenukaran.catatan,
+    });
+    setPenukaranDialogOpen(true);
   }
 
   // Combine and sort transactions chronologically
@@ -604,12 +632,18 @@ export default function SaldoPoinPage() {
                           <button
                             onClick={() => openDetailSetor(item.rawSetor)}
                             className="p-2 text-zinc-500 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition"
-                            title="Lihat Detail Transaksi"
+                            title="Lihat Detail Setoran"
                           >
                             <Eye size={18} />
                           </button>
                         ) : (
-                          <span className="text-xs text-zinc-400 italic">-</span>
+                          <button
+                            onClick={() => openDetailPenukaran(item)}
+                            className="p-2 text-zinc-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition"
+                            title="Lihat Detail Penukaran"
+                          >
+                            <Eye size={18} />
+                          </button>
                         )}
                       </div>
                     </td>
@@ -646,9 +680,15 @@ export default function SaldoPoinPage() {
             unifiedTransactions.map((item) => (
               <div
                 key={`${item.type}-${item.id}`}
-                onClick={() => item.type === "setoran" && openDetailSetor(item.rawSetor)}
-                className={`border border-zinc-200 rounded-xl p-4 shadow-sm transition-colors space-y-3 ${
-                  item.type === "setoran" ? "cursor-pointer hover:border-teal-300" : ""
+                onClick={() =>
+                  item.type === "setoran"
+                    ? openDetailSetor(item.rawSetor)
+                    : openDetailPenukaran(item)
+                }
+                className={`border border-zinc-200 rounded-xl p-4 shadow-sm transition-colors space-y-3 cursor-pointer hover:border-zinc-300 ${
+                  item.type === "setoran"
+                    ? "hover:border-teal-300"
+                    : "hover:border-red-300"
                 }`}
               >
                 <div className="flex justify-between items-start">
@@ -715,6 +755,15 @@ export default function SaldoPoinPage() {
           setSelectedSetorItem(null);
         }}
         item={selectedSetorItem}
+      />
+
+      <PenukaranDetailDialog
+        open={penukaranDialogOpen}
+        onClose={() => {
+          setPenukaranDialogOpen(false);
+          setSelectedPenukaranItem(null);
+        }}
+        item={selectedPenukaranItem}
       />
     </div>
   );
