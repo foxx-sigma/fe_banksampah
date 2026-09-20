@@ -27,7 +27,7 @@ const NAV_ITEMS = [
     icon: Users,
   },
   {
-    name: "Penukaran",
+    name: "Setoran Sampah",
     href: "/dashboard/admin/setoran",
     icon: Package,
   },
@@ -127,8 +127,8 @@ export default function Sidebar() {
         {NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
           const Icon = item.icon;
-          const isPenukaran = item.name === "Penukaran";
-          const hasPending = isPenukaran && pendingCount > 0;
+          const isSetoran = item.name === "Setoran Sampah";
+          const hasPending = isSetoran && pendingCount > 0;
 
           return (
             <Link

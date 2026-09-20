@@ -52,12 +52,21 @@ const formatWeight = (value: number) =>
     maximumFractionDigits: 2,
   }).format(value);
 
+const STATUS_FILTER_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "Semua Status" },
+  { value: "menunggu_konfirmasi", label: "Menunggu Konfirmasi" },
+  { value: "diverifikasi", label: "Diverifikasi" },
+  { value: "selesai", label: "Selesai" },
+  { value: "ditolak", label: "Ditolak" },
+];
+
 export default function SaldoPoinPage() {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(true);
   const [summaryError, setSummaryError] = useState("");
 
   const [allItems, setAllItems] = useState<SetorSampahItem[]>([]);
+  const [statusFilter, setStatusFilter] = useState("");
   const [bulanFilter, setBulanFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -102,6 +111,7 @@ export default function SaldoPoinPage() {
       setError("");
       try {
         const params = new URLSearchParams();
+        if (statusFilter) params.set("status", statusFilter);
         if (bulanFilter) params.set("bulan", bulanFilter);
 
         const query = params.toString() ? `?${params}` : "";
@@ -140,7 +150,7 @@ export default function SaldoPoinPage() {
     return () => {
       cancelled = true;
     };
-  }, [bulanFilter, refreshKey]);
+  }, [statusFilter, bulanFilter, refreshKey]);
 
   const handleRetry = useCallback(() => {
     setRefreshKey((k) => k + 1);
@@ -303,7 +313,21 @@ export default function SaldoPoinPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:flex-initial">
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full sm:w-auto rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white"
+              >
+                {STATUS_FILTER_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div className="relative flex-1 sm:flex-initial">
               <CalendarBlank
                 size={18}
@@ -316,9 +340,12 @@ export default function SaldoPoinPage() {
                 className="w-full sm:w-auto rounded-lg border border-zinc-300 pl-10 pr-4 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white"
               />
             </div>
-            {bulanFilter && (
+            {(statusFilter || bulanFilter) && (
               <button
-                onClick={() => setBulanFilter("")}
+                onClick={() => {
+                  setStatusFilter("");
+                  setBulanFilter("");
+                }}
                 className="text-sm font-medium text-teal-600 hover:text-teal-700 transition whitespace-nowrap"
               >
                 Reset

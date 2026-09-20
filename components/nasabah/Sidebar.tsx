@@ -32,11 +32,6 @@ const NAV_ITEMS = [
     icon: Package,
   },
   {
-    name: "Status Pengajuan",
-    href: "/dashboard/nasabah/status-pengajuan",
-    icon: ClockCounterClockwise,
-  },
-  {
     name: "Saldo & Histori",
     href: "/dashboard/nasabah/saldo-poin",
     icon: Coins,
@@ -45,11 +40,6 @@ const NAV_ITEMS = [
     name: "Tukar Poin",
     href: "/dashboard/nasabah/tukar-poin",
     icon: Gift,
-  },
-  {
-    name: "Cetak Bukti",
-    href: "/dashboard/nasabah/cetak-bukti",
-    icon: Receipt,
   },
 ];
 

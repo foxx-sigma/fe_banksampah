@@ -229,11 +229,11 @@ export default function KategoriSampahNasabahPage() {
               key={item.id}
               className="bg-white border border-zinc-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
             >
-              <div className="h-40 bg-zinc-50 border-b border-zinc-100">
+              <div className="h-44 bg-zinc-50/80 border-b border-zinc-100 flex items-center justify-center p-2">
                 <FallbackImage
                   src={item.foto || undefined}
                   alt={item.namaKategori}
-                  className="h-full w-full object-cover"
+                  className="max-h-full max-w-full object-contain rounded-lg"
                   fallbackClassName="flex h-full w-full items-center justify-center p-6"
                 />
               </div>

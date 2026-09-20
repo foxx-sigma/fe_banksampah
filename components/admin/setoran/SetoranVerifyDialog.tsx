@@ -205,8 +205,8 @@ export default function SetoranVerifyDialog({
              {/* Two-column layout for visual balance */}
              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                {/* Left: Photo */}
-               <div className="flex flex-col items-center">
-                 <div className="w-full aspect-video rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-sm">
+               <div className="flex flex-col items-center justify-center">
+                 <div className="w-full h-64 sm:h-80 rounded-xl overflow-hidden bg-zinc-100/80 border border-zinc-200 shadow-sm flex items-center justify-center p-2">
                     {detail.foto ? (
                       <FallbackImage
                         src={
@@ -215,7 +215,7 @@ export default function SetoranVerifyDialog({
                             : `${(process.env.NEXT_PUBLIC_BASE_API_URL ?? "").replace(/\/$/, "")}/${detail.foto.replace(/^\//, "")}`
                         }
                         alt="Foto Setoran"
-                        className="w-full h-full object-cover"
+                        className="max-h-full max-w-full object-contain rounded-lg"
                         fallbackClassName="flex items-center justify-center p-6"
                       />
                    ) : (

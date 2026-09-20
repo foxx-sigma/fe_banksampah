@@ -228,11 +228,11 @@ export default function HadiahPage() {
                     className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors"
                   >
                     <td className="px-4 py-3">
-                      <div className="h-10 w-10 rounded-lg overflow-hidden border border-zinc-200 bg-zinc-50">
+                      <div className="h-10 w-10 rounded-lg overflow-hidden border border-zinc-200 bg-zinc-50 flex items-center justify-center p-0.5">
                         <FallbackImage
                           src={item.foto || undefined}
                           alt={item.namaHadiah}
-                          className="h-full w-full object-cover"
+                          className="max-h-full max-w-full object-contain"
                           fallbackClassName="flex h-full w-full items-center justify-center"
                         />
                       </div>
