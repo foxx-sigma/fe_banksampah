@@ -207,13 +207,17 @@ export default function SetoranVerifyDialog({
                {/* Left: Photo */}
                <div className="flex flex-col items-center">
                  <div className="w-full aspect-video rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 shadow-sm">
-                   {detail.foto ? (
-                     <FallbackImage
-                       src={`${process.env.NEXT_PUBLIC_BASE_API_URL}/${detail.foto}`}
-                       alt="Foto Setoran"
-                       className="w-full h-full object-cover"
-                       fallbackClassName="flex items-center justify-center p-6"
-                     />
+                    {detail.foto ? (
+                      <FallbackImage
+                        src={
+                          detail.foto.startsWith("http")
+                            ? detail.foto
+                            : `${(process.env.NEXT_PUBLIC_BASE_API_URL ?? "").replace(/\/$/, "")}/${detail.foto.replace(/^\//, "")}`
+                        }
+                        alt="Foto Setoran"
+                        className="w-full h-full object-cover"
+                        fallbackClassName="flex items-center justify-center p-6"
+                      />
                    ) : (
                      <div className="flex items-center justify-center h-full p-6 text-zinc-400">
                        <span className="text-center">Tidak ada foto</span>
