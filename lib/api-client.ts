@@ -1,7 +1,5 @@
 import type { ApiResponse } from "@/types/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3001";
-
 export class ApiError extends Error {
   status: number;
 
@@ -32,16 +30,45 @@ async function parseErrorMessage(res: Response): Promise<string> {
   return `Request gagal dengan status ${res.status}`;
 }
 
+async function getServerCookieHeader(): Promise<string | undefined> {
+  if (typeof window === "undefined") {
+    try {
+      const { cookies } = await import("next/headers");
+      const cookieStore = await cookies();
+      return cookieStore.toString();
+    } catch {
+      return undefined;
+    }
+  }
+  return undefined;
+}
+
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<ApiResponse<T>> {
-  const url = `${BASE_URL}${path}`;
+  const isServer = typeof window === "undefined";
+  const backendUrl = (process.env.BACKEND_URL || "http://localhost:3001").replace(/\/$/, "");
+
+  let url: string;
+  if (path.startsWith("http://") || path.startsWith("https://")) {
+    url = path;
+  } else {
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    url = isServer ? `${backendUrl}${cleanPath}` : cleanPath;
+  }
 
   const isFormData = options.body instanceof FormData;
   const headers = buildHeaders(
     isFormData ? undefined : { "Content-Type": "application/json" },
   );
+
+  if (isServer) {
+    const serverCookieHeader = await getServerCookieHeader();
+    if (serverCookieHeader && !headers.has("Cookie")) {
+      headers.set("Cookie", serverCookieHeader);
+    }
+  }
 
   if (options.headers) {
     const extra = new Headers(options.headers);
@@ -50,10 +77,13 @@ export async function apiFetch<T>(
     });
   }
 
-  const res = await fetch(url, {
+  const fetchOptions: RequestInit = {
+    credentials: isServer ? undefined : "include",
     ...options,
     headers,
-  });
+  };
+
+  const res = await fetch(url, fetchOptions);
 
   if (!res.ok) {
     const msg = await parseErrorMessage(res);

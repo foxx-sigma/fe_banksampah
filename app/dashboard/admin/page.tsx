@@ -51,7 +51,7 @@ async function fetchDashboardData() {
     ? { Authorization: `Bearer ${token}` }
     : {};
 
-  let stats: AdminOverviewStats = {
+  const stats: AdminOverviewStats = {
     totalNasabah: 0,
     setoranMasukBulanIni: 0,
     totalPoinDitukarBulanIni: 0,

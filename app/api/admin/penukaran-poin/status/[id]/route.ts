@@ -17,7 +17,7 @@ export async function PUT(
 
   try {
     const body = await req.json();
-    const result = await apiPut<any>(
+    const result = await apiPut<unknown>(
       `/api/v1/penukaran-poin/admin/status/${id}`,
       body,
       { Authorization: `Bearer ${token}` },

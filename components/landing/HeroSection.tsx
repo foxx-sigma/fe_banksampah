@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import LayeredExtrudedText from "@/components/landing/LayeredExtrudedText";
 import { useSectionStagger } from "@/hooks/useSectionStagger";
 
@@ -63,18 +64,18 @@ export default function HeroSection() {
         <div aria-hidden="true" className="pixel-divider" />
 
         <div className="flex flex-col gap-4 sm:flex-row">
-          <button
-            type="button"
-            className="rounded-full bg-primary px-6 py-3 font-sans font-semibold text-white transition hover:opacity-90"
+          <Link
+            href="/register"
+            className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 font-sans font-semibold text-white transition hover:opacity-90"
           >
             Daftar Sekarang
-          </button>
-          <button
-            type="button"
-            className="rounded-full border-2 border-primary px-6 py-3 font-sans font-semibold text-primary transition hover:bg-primary/10"
+          </Link>
+          <Link
+            href="/tentang"
+            className="inline-flex items-center justify-center rounded-full border-2 border-primary px-6 py-3 font-sans font-semibold text-primary transition hover:bg-primary/10"
           >
             Pelajari Lebih Lanjut
-          </button>
+          </Link>
         </div>
 
       </div>

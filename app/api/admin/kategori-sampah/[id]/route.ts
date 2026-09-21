@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { apiGet, apiDelete } from "@/lib/api-client";
 import type { KategoriSampahItem } from "@/types/kategori-sampah";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3001";
+const BASE_URL = (process.env.BACKEND_URL || "http://localhost:3001").replace(/\/$/, "");
 
 export async function GET(
   req: NextRequest,

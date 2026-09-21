@@ -139,9 +139,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const logout = useCallback(async () => {
-    await fetchBff("/api/auth/logout", { method: "POST" });
-    setState({ user: null, isLoading: false, isAuthenticated: false });
-    router.push("/login");
+    try {
+      await fetchBff("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Abaikan error saat memanggil logout BFF jika ada, tetap bersihkan state
+    } finally {
+      setState({ user: null, isLoading: false, isAuthenticated: false });
+      if (typeof window !== "undefined") {
+        window.location.replace("/login");
+      } else {
+        router.replace("/login");
+      }
+    }
   }, [router]);
 
   return (

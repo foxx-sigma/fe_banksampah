@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3001";
+const BASE_URL = (process.env.BACKEND_URL || "http://localhost:3001").replace(/\/$/, "");
 
 export async function POST(req: NextRequest) {
   const token = req.cookies.get("auth_token")?.value;

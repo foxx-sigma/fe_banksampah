@@ -2,13 +2,12 @@
 
 import { useState, Suspense, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { useAuth } from "@/context/AuthContext";
 import PasswordInput from "@/components/ui/PasswordInput";
 
 function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
   const [username, setUsername] = useState("");
@@ -34,13 +33,13 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-sm relative">
-      <button
-        onClick={() => router.back()}
+      <Link
+        href="/"
         className="absolute left-6 top-6 p-2 -ml-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors flex items-center justify-center"
-        aria-label="Kembali"
+        aria-label="Kembali ke Beranda"
       >
         <ArrowLeft size={20} weight="bold" />
-      </button>
+      </Link>
 
       <h1 className="font-heading text-2xl font-bold text-center mb-2 mt-4">
         Masuk

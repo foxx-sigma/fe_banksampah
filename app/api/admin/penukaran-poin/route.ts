@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     if (bulan) params.set("bulan", bulan);
 
     const query = params.toString() ? `?${params}` : "";
-    const result = await apiGet<any[]>(
+    const result = await apiGet<unknown[]>(
       `/api/v1/penukaran-poin/admin/list${query}`,
       { Authorization: `Bearer ${token}` },
     );
