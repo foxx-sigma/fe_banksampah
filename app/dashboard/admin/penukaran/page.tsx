@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Swap,
   CalendarBlank,
@@ -9,6 +9,8 @@ import {
   Gift,
   CheckCircle,
   Clock,
+  CaretLeft,
+  CaretRight,
 } from "@phosphor-icons/react";
 import Skeleton from "@/components/ui/Skeleton";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
@@ -62,10 +64,13 @@ const formatDate = (d: string) =>
 const formatNumber = (value: number) =>
   new Intl.NumberFormat("id-ID").format(value);
 
+const LIMIT = 10;
+
 export default function AdminPenukaranPage() {
   const [items, setItems] = useState<PenukaranItem[]>([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [bulanFilter, setBulanFilter] = useState("");
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -133,6 +138,12 @@ export default function AdminPenukaranPage() {
     setConfirmDialogOpen(true);
   }
 
+  const totalPages = Math.ceil(items.length / LIMIT);
+  const paginatedItems = useMemo(() => {
+    const startIndex = (page - 1) * LIMIT;
+    return items.slice(startIndex, startIndex + LIMIT);
+  }, [items, page]);
+
   async function handleSelesai() {
     if (!selectedItem) return;
     setUpdating(true);
@@ -181,7 +192,10 @@ export default function AdminPenukaranPage() {
             />
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
               className="rounded-lg border border-zinc-300 pl-10 pr-8 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white appearance-none"
             >
               {STATUS_FILTER_OPTIONS.map((opt) => (
@@ -199,7 +213,10 @@ export default function AdminPenukaranPage() {
             <input
               type="month"
               value={bulanFilter}
-              onChange={(e) => setBulanFilter(e.target.value)}
+              onChange={(e) => {
+                setBulanFilter(e.target.value);
+                setPage(1);
+              }}
               className="rounded-lg border border-zinc-300 pl-10 pr-4 py-2 text-sm outline-none transition focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 bg-white"
             />
           </div>
@@ -208,6 +225,7 @@ export default function AdminPenukaranPage() {
               onClick={() => {
                 setStatusFilter("");
                 setBulanFilter("");
+                setPage(1);
               }}
               className="text-sm text-teal-600 hover:text-teal-700 font-medium transition"
             >
@@ -287,7 +305,7 @@ export default function AdminPenukaranPage() {
                   </td>
                 </tr>
               ) : (
-                items.map((item) => (
+                paginatedItems.map((item) => (
                   <tr
                     key={item.id}
                     className="border-b border-zinc-50 hover:bg-zinc-50/50 transition-colors"
@@ -344,6 +362,45 @@ export default function AdminPenukaranPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-zinc-500">
+            <span>
+              Menampilkan {(page - 1) * LIMIT + 1} -{" "}
+              {Math.min(page * LIMIT, items.length)} dari {items.length} data
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <CaretLeft size={18} />
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`min-w-[36px] h-9 text-sm font-medium rounded-lg transition ${
+                    p === page
+                      ? "bg-teal-600 text-white"
+                      : "text-zinc-600 hover:bg-zinc-100"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <CaretRight size={18} />
+              </button>
+            </div>
+          </div>
+        )}
 
         {loading && items.length > 0 && (
           <div className="flex items-center justify-center py-3 border-t border-zinc-100">

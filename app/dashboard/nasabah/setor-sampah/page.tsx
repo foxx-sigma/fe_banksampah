@@ -274,7 +274,23 @@ export default function SetorSampahPage() {
           beratKg: parseFloat(i.beratKg),
         }));
         formData.append("items", JSON.stringify(items));
-        formData.append("tanggal", new Date(tanggal).toISOString());
+        
+        const now = new Date();
+        let submitDate = now;
+        if (tanggal) {
+          const parts = tanggal.split("-");
+          if (parts.length === 3) {
+            submitDate = new Date(
+              parseInt(parts[0], 10),
+              parseInt(parts[1], 10) - 1,
+              parseInt(parts[2], 10),
+              now.getHours(),
+              now.getMinutes(),
+              now.getSeconds()
+            );
+          }
+        }
+        formData.append("tanggal", submitDate.toISOString());
 
         if (catatan.trim()) formData.append("catatan", catatan.trim());
         if (fotoFile) formData.append("foto", fotoFile);

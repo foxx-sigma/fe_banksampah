@@ -281,10 +281,21 @@ export default function SaldoPoinPage() {
       ? list.filter((item) => item.status === statusFilter)
       : list;
 
-    // Sort descending by date
-    return filtered.sort(
-      (a, b) => new Date(b.tanggal).getTime() - new Date(a.tanggal).getTime()
-    );
+    // Sort descending by date, and fallback to createdAt/id
+    return filtered.sort((a, b) => {
+      const dateA = new Date(a.tanggal).getTime();
+      const dateB = new Date(b.tanggal).getTime();
+      if (dateA !== dateB) {
+        return dateB - dateA;
+      }
+      const createdA = new Date(
+        a.type === "setoran" ? a.rawSetor.createdAt : a.rawPenukaran.tanggal
+      ).getTime();
+      const createdB = new Date(
+        b.type === "setoran" ? b.rawSetor.createdAt : b.rawPenukaran.tanggal
+      ).getTime();
+      return createdB - createdA;
+    });
   }, [setorItems, penukaranItems, tipeFilter, statusFilter]);
 
   // Monthly statistics summary
