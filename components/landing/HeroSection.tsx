@@ -43,7 +43,7 @@ export default function HeroSection() {
     <section
       id="beranda"
       ref={sectionRef}
-      className="relative flex min-h-[100svh] w-full flex-col justify-center overflow-hidden px-6 pt-20 pb-40 sm:pt-28 sm:pb-56"
+      className="relative flex min-h-[85svh] w-full flex-col justify-center overflow-hidden px-6 pt-20 pb-20 sm:pt-28 sm:pb-32"
     >
       <div className="relative z-10 mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
         <h1 className="font-heading font-bold text-4xl leading-tight text-black sm:text-5xl md:text-6xl">

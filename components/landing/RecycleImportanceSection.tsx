@@ -86,7 +86,7 @@ export default function RecycleImportanceSection() {
   const sectionRef = useSectionStagger(staggerOptions);
 
   return (
-    <section ref={sectionRef} className="w-full px-6 py-20 sm:py-28">
+    <section ref={sectionRef} className="w-full px-6 pt-10 pb-20 sm:pt-16 sm:pb-28">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
         <h2 className="recycle-headline font-heading font-bold text-3xl leading-tight text-black opacity-0 sm:text-4xl md:text-5xl">
           Pentingnya{"\u00A0"}
