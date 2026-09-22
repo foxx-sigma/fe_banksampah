@@ -2,7 +2,7 @@ import NasabahSidebar from "@/components/nasabah/Sidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Dashboard Nasabah - Bank Sampah Digital",
+  title: "Dashboard Nasabah - Loopera",
   description: "Dashboard panel untuk Nasabah",
 };
 

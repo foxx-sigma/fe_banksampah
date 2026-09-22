@@ -64,12 +64,12 @@ export default function AboutSection() {
       <div className="mx-auto max-w-5xl">
         <div className="flex flex-col items-center gap-6 text-center">
           <h2 className="about-heading font-heading text-3xl font-bold text-black opacity-0 sm:text-4xl md:text-5xl">
-            Tentang Bank Sampah Digital
+            Tentang Loopera
           </h2>
           <p className="about-intro max-w-3xl font-sans text-base leading-relaxed text-black/70 opacity-0 sm:text-lg">
             Platform digital untuk mencatat, menukar, dan memantau sampah daur
             ulang demi lingkungan yang lebih bersih — menghubungkan Nasabah
-            (masyarakat/siswa) dengan Bank Sampah secara transparan dan mudah
+            (masyarakat/siswa) dengan Loopera secara transparan dan mudah
             diakses.
           </p>
         </div>

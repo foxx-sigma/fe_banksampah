@@ -2,7 +2,7 @@ import Sidebar from "@/components/admin/Sidebar";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard - Bank Sampah Digital",
+  title: "Admin Dashboard - Loopera",
   description: "Dashboard panel untuk Administrator",
 };
 

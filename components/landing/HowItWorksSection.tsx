@@ -14,11 +14,11 @@ const STEPS: Step[] = [
   {
     title: "Daftar & Verifikasi Akun",
     description:
-      "Buat akun di aplikasi Bank Sampah Digital, lalu verifikasi identitasmu agar bisa mulai menyetor sampah dan mengumpulkan poin.",
+      "Buat akun di aplikasi Loopera, lalu verifikasi identitasmu agar bisa mulai menyetor sampah dan mengumpulkan poin.",
     imageSrc: "/step/sign-up.svg",
   },
   {
-    title: "Setor Sampah Terpilah ke Titik Bank Sampah",
+    title: "Setor Sampah Terpilah ke Titik Loopera",
     description:
       "Bawa sampah yang sudah dipilah ke titik pengumpulan bank sampah terdekat sesuai lokasi yang tersedia di aplikasi.",
     imageSrc: "/step/setorkan sampah.svg",
@@ -26,7 +26,7 @@ const STEPS: Step[] = [
   {
     title: "Petugas Menimbang & Mencatat Sampah",
     description:
-      "Petugas bank sampah akan menimbang dan mencatat jenis serta berat sampah yang kamu setorkan secara digital.",
+      "Petugas Loopera akan menimbang dan mencatat jenis serta berat sampah yang kamu setorkan secara digital.",
     imageSrc: "/step/petugas mendata.svg",
   },
   {

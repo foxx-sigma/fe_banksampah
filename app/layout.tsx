@@ -16,8 +16,8 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Bank Sampah Digital",
-  description: "Landing page Bank Sampah Digital & Daur Ulang",
+  title: "Loopera",
+  description: "Landing page Loopera & Daur Ulang",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

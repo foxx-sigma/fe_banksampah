@@ -45,7 +45,7 @@ function LoginForm() {
         Masuk
       </h1>
       <p className="text-center text-sm text-gray-500 mb-6">
-        Masuk ke akun Bank Sampah Digital
+        Masuk ke akun Loopera
       </p>
 
       {isSessionExpired && !error && (

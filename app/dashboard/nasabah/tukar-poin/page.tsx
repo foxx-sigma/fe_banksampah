@@ -150,7 +150,7 @@ export default function TukarPoinPage() {
 
       setConfirmOpen(false);
       setSuccessMessage(
-        `Penukaran "${selectedHadiah.namaHadiah}" berhasil diajukan! Silakan ambil hadiah di unit Bank Sampah.`,
+        `Penukaran "${selectedHadiah.namaHadiah}" berhasil diajukan! Silakan ambil hadiah di unit Loopera.`,
       );
       setSuccessOpen(true);
       setRefreshKey((k) => k + 1);

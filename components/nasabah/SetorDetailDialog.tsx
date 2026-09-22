@@ -191,7 +191,7 @@ export default function SetorDetailDialog({
       <body>
         <div class="header">
           <h1 class="title">${title}</h1>
-          <p class="subtitle">Bank Sampah Digital</p>
+          <p class="subtitle">Loopera</p>
         </div>
         
         <table class="info-table">
@@ -240,7 +240,7 @@ export default function SetorDetailDialog({
 
         <div class="footer">
           <p style="margin: 0 0 4px 0;">Terima kasih atas kontribusi Anda menjaga lingkungan!</p>
-          <p style="margin: 0;">Nota ini adalah bukti transaksi yang sah dari Bank Sampah.</p>
+          <p style="margin: 0;">Nota ini adalah bukti transaksi yang sah dari Loopera.</p>
         </div>
 
         <script>

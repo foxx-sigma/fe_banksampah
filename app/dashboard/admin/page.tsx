@@ -7,12 +7,10 @@ import {
 } from "@phosphor-icons/react/dist/ssr"; // Use SSR imports for Server Components
 
 import StatCard from "@/components/admin/StatCard";
-import WasteTonChart from "@/components/admin/WasteTonChart";
 import PendingSetoranList from "@/components/admin/PendingSetoranList";
 import { apiGet } from "@/lib/api-client";
 import type {
   AdminOverviewStats,
-  CategoryTonData,
   PendingSetorItem,
 } from "@/types/dashboard-admin";
 
@@ -57,7 +55,6 @@ async function fetchDashboardData() {
     totalPoinDitukarBulanIni: 0,
     estimasiPembayaranBulanIni: 0,
   };
-  let chartData: CategoryTonData[] = [];
   let pendingSetoran: PendingSetorItem[] = [];
 
   try {
@@ -77,17 +74,6 @@ async function fetchDashboardData() {
     );
     
     if (rekapRes && rekapRes.data) {
-      const bjs = rekapRes.data.breakdownJenisSampah;
-      
-      if (bjs) {
-        chartData = [
-          { kategori: "Plastik", tonaseKg: bjs.plastik?.tonaseKg || 0, warna: "bg-teal-600" },
-          { kategori: "Kertas", tonaseKg: bjs.kertas?.tonaseKg || 0, warna: "bg-teal-500" },
-          { kategori: "Logam", tonaseKg: bjs.logam?.tonaseKg || 0, warna: "bg-teal-700" },
-          { kategori: "Kaca", tonaseKg: bjs.kaca?.tonaseKg || 0, warna: "bg-teal-400" },
-        ];
-      }
-
       stats.estimasiPembayaranBulanIni = rekapRes.data.rekapitulasiTonase?.totalEstimasiPembayaranRupiah || 0;
       stats.totalPoinDitukarBulanIni = rekapRes.data.rekapitulasiPenukaranPoin?.totalPoinTerpakai || 0;
     }
@@ -114,11 +100,11 @@ async function fetchDashboardData() {
     // This allows the component to render empty state instead of misleading data
   }
 
-  return { stats, chartData, pendingSetoran };
+  return { stats, pendingSetoran };
 }
 
 export default async function AdminOverviewPage() {
-  const { stats, chartData, pendingSetoran } = await fetchDashboardData();
+  const { stats, pendingSetoran } = await fetchDashboardData();
 
   const formatRupiah = (value: number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -139,7 +125,7 @@ export default async function AdminOverviewPage() {
           Overview Dashboard
         </h1>
         <p className="font-sans text-zinc-500 text-sm">
-          Pantau ringkasan performa dan aktivitas Bank Sampah terbaru.
+          Pantau ringkasan performa dan aktivitas Loopera terbaru.
         </p>
       </div>
 
@@ -167,17 +153,9 @@ export default async function AdminOverviewPage() {
         />
       </div>
 
-      {/* Main Panel Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Chart Column (2/3) */}
-        <div className="lg:col-span-2">
-          <WasteTonChart data={chartData} />
-        </div>
-
-        {/* Pending List Column (1/3) */}
-        <div className="lg:col-span-1">
-          <PendingSetoranList items={pendingSetoran} />
-        </div>
+      {/* Main Panel Content - full width pending list */}
+      <div className="w-full">
+        <PendingSetoranList items={pendingSetoran} />
       </div>
     </div>
   );

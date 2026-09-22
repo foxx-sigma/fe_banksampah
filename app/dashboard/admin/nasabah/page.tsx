@@ -133,7 +133,7 @@ export default function NasabahPage() {
             Data Nasabah
           </h1>
           <p className="font-sans text-zinc-500 text-sm">
-            Kelola data nasabah Bank Sampah.
+            Kelola data nasabah Loopera.
           </p>
         </div>
         <button

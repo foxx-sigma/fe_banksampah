@@ -40,7 +40,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-5xl grid-cols-1 gap-12 px-6 py-16 sm:py-20 md:grid-cols-2 md:gap-10">
         <div className="footer-col flex flex-col gap-4 opacity-0">
           <span className="font-heading text-xl font-semibold text-black">
-            Bank Sampah Digital
+            Loopera
           </span>
           <p className="font-sans text-sm leading-relaxed text-black/70">
             Platform digital untuk mencatat, menukar, dan memantau sampah daur
@@ -69,7 +69,7 @@ export default function Footer() {
       <div className="footer-bottom border-t border-gray-100 opacity-0">
         <div className="mx-auto max-w-5xl px-6 py-5">
           <p className="text-center font-sans text-xs text-black/50">
-            {currentYear} Bank Sampah Digital. Hak Cipta Dilindungi.
+            {currentYear} Loopera. Hak Cipta Dilindungi.
           </p>
         </div>
       </div>

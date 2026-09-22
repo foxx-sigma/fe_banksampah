@@ -42,7 +42,7 @@ export default function Navbar() {
               onClick={handleNavClick}
               className="font-heading text-xl font-semibold text-black"
             >
-              Bank Sampah
+              Loopera
             </Link>
 
             <div className="hidden items-center gap-1 md:flex">

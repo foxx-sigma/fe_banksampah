@@ -103,7 +103,7 @@ export default function RegisterPage() {
           Daftar Akun
         </h1>
         <p className="text-center text-sm text-gray-500 mb-6">
-          Buat akun baru di Bank Sampah Digital
+          Buat akun baru di Loopera
         </p>
 
         <div className="mb-6 flex rounded-lg border border-gray-200 p-1">
@@ -127,7 +127,7 @@ export default function RegisterPage() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            Admin Bank
+            Admin Loopera
           </button>
         </div>
 
@@ -321,7 +321,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="mt-2 w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Memproses..." : "Daftar sebagai Admin Bank"}
+              {loading ? "Memproses..." : "Daftar sebagai Admin Loopera"}
             </button>
           </form>
         )}

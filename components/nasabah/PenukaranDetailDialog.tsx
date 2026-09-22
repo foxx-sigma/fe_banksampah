@@ -147,7 +147,7 @@ export default function PenukaranDetailDialog({
       <body>
         <div class="header">
           <h1 class="title">${title}</h1>
-          <p class="subtitle">Bank Sampah Digital</p>
+          <p class="subtitle">Loopera</p>
         </div>
         
         <table class="info-table">
